@@ -6,7 +6,9 @@ $host = getenv('MYSQLHOST') ?: 'localhost';
 $user = getenv('MYSQLUSER') ?: 'root';
 $pass = getenv('MYSQLPASSWORD') ?: '';
 $dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
-$port = getenv('MYSQLPORT') ?: 3307;
+
+// Railway မှာဆိုရင် Railway ကပေးတဲ့ PORT ကို ယူမယ်၊ Local မှာဆိုရင် 3307 ကို သုံးမယ်
+$port = getenv('MYSQLPORT') ? intval(getenv('MYSQLPORT')) : 3307;
 
 $conn = new mysqli($host, $user, $pass, $dbname, $port);
 if ($conn->connect_error) {
