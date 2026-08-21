@@ -86,45 +86,14 @@ $result = $conn->query($query);
     <!-- 🌟 URL ထဲမှာ current_table ပါသွားအောင် ?table=... ထည့်ပေးခြင်း -->
     <a href="shopping_cart.php?table=<?php echo urlencode($current_table); ?>" class="text-white fw-bold" style="text-decoration:none">ခြင်းတောင်းကြည့်မည် ></a>
 </div>  
-<script>
-function showControls(id) {
-    document.getElementById('btn-' + id).style.display = 'none';
-    document.getElementById('controls-' + id).style.display = 'block';
-}
-
-function changeQty(id, val) {
-    let input = document.getElementById('qty-' + id);
-    let newVal = parseInt(input.value) + val;
-    if(newVal >= 1) input.value = newVal;
-}
-
-function addToCart(id, name, price) {
-    let qty = document.getElementById('qty-' + id).value;
-    let cart = JSON.parse(localStorage.getItem('restaurant_cart')) || [];
-    cart.push({ id, name, price, quantity: parseInt(qty) });
-    localStorage.setItem('restaurant_cart', JSON.stringify(cart));
-    alert('ခြင်းတောင်းထဲသို့ ထည့်ပြီးပါပြီ!');
-    location.reload();
-}
-
-// ဤနေရာတွင် 'restaurant_cart' ကိုသာ သုံးပါ
-let cartData = JSON.parse(localStorage.getItem('restaurant_cart')) || [];
-if(cartData.length > 0) {
-    document.getElementById('floating-cart-bar').style.display = 'flex';
-    // ပစ္စည်းအရေအတွက် စုစုပေါင်းကို ပေါင်းပြခြင်း
-    let totalQty = cartData.reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
-    document.getElementById('cart-count').innerText = totalQty;
-}
-</script>
-<!-- index.php ထဲရှိ အခြား JavaScript များနှင့် HTML များကို ဤနေရာတွင် ထားပါ -->
 
 <script>
-// 🌟 ၁။ URL ထဲက table နံပါတ်ကို ဖမ်းယူပြီး LocalStorage ထဲ သိမ်းမည့် အပိုင်း (ဒီနေရာမှာ အသစ်ထည့်ပါ)
+// 🌟 ၁။ URL ထဲက table နံပါတ်ကို ဖမ်းယူပြီး LocalStorage ထဲ သိမ်းမည့် အပိုင်း
 const urlParams = new URLSearchParams(window.location.search);
 const urlTable = urlParams.get('table');
 
 if (urlTable) {
-    // URL ထဲမှာ table ပါလာရင် အဲဒီတန်ဖိုးအသစ်ကို သိမ်းမယ် (ဥပမာ '3')
+    // URL ထဲမှာ table ပါလာရင် အဲဒီတန်ဖိုးအသစ်ကို သိမ်းမယ်
     localStorage.setItem('current_table', urlTable);
 }
 
