@@ -2,25 +2,25 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Railway က MYSQL_URL ပေးထားရင် အဲ့ဒါကိုသုံးမယ်၊ မရှိရင် Local (XAMPP) အတွက် သုံးမယ်
-$database_url = getenv('MYSQL_URL');
+// Railway ရော Local (XAMPP) မှာပါ အမှားအယွင်းမရှိ ချိတ်ဆက်နိုင်မည့် ပုံစံ
+$host = getenv('MYSQLHOST') ?: 'localhost';
+$user = getenv('MYSQLUSER') ?: 'root';
+$pass = getenv('MYSQLPASSWORD') ?: '';
+$dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
+$port = getenv('MYSQLPORT') ? intval(getenv('MYSQLPORT')) : 3307;
 
-if ($database_url) {
+// တကယ်လို့ MYSQL_URL ရှိနေခဲ့ရင် URL ကနေ တစ်ဆင့် အချက်အလက်ခွဲယူရန်
+$database_url = getenv('MYSQL_URL');
+if ($database_url && strpos($database_url, '${') === false) {
     $db = parse_url($database_url);
-    $host = $db["host"];
-    $user = $db["user"];
-    $pass = $db["pass"];
-    $dbname = ltrim($db["path"], "/");
-    $port = $db["port"];
-} else {
-    $host = 'localhost';
-    $user = 'root';
-    $pass = '';
-    $dbname = 'my_website_db';
-    $port = 3307;
+    if (isset($db["host"])) $host = $db["host"];
+    if (isset($db["user"])) $user = $db["user"];
+    if (isset($db["pass"])) $pass = $db["pass"];
+    if (isset($db["path"])) $dbname = ltrim($db["path"], "/");
+    if (isset($db["port"])) $port = $db["port"];
 }
 
-$conn = new mysqli($host, $user, $pass, $dbname, (int)$port);
+$conn = new mysqli($host, $user, $pass, $dbname, $port);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
