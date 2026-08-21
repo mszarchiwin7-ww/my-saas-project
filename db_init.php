@@ -1,23 +1,12 @@
 <?php
-// Railway မှာဆိုရင် MYSQL_URL ကိုသုံးမယ်၊ Local (XAMPP) မှာဆိုရင် သီးခြား variables တွေကိုသုံးမယ်
-$database_url = getenv('MYSQL_URL');
+// Railway ရော XAMPP မှာပါ အလုပ်လုပ်မည့် တိုက်ရိုက်ချိတ်ဆက်ပုံ
+$host = getenv('MYSQLHOST') ?: 'localhost';
+$user = getenv('MYSQLUSER') ?: 'root';
+$pass = getenv('MYSQLPASSWORD') ?: '';
+$dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
+$port = getenv('MYSQLPORT') ? intval(getenv('MYSQLPORT')) : 3307;
 
-if ($database_url) {
-    $db = parse_url($database_url);
-    $host = $db["host"];
-    $user = $db["user"];
-    $pass = $db["pass"];
-    $dbname = ltrim($db["path"], "/");
-    $port = $db["port"];
-} else {
-    $host = getenv('MYSQLHOST') ?: 'localhost';
-    $user = getenv('MYSQLUSER') ?: 'root';
-    $pass = getenv('MYSQLPASSWORD') ?: '';
-    $dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
-    $port = getenv('MYSQLPORT') ?: 3307;
-}
-
-$conn = new mysqli($host, $user, $pass, $dbname, (int)$port);
+$conn = new mysqli($host, $user, $pass, $dbname, $port);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
