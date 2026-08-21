@@ -1,14 +1,11 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
 # mysqli extension ကို တပ်ဆင်ခြင်း
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Apache MPM conflict ဖြစ်မှုကို ဖြေရှင်းခြင်း
-RUN a2dismod mpm_prefork && a2enmod mpm_event
-
-# Railway PORT ကို Apache သို့ ချိတ်ဆက်ပေးခြင်း
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-RUN sed -i 's/80/\${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
-
 # ပရောဂျက်ဖိုင်များကို ကူးယူခြင်း
-COPY . /var/www/html/
+COPY . /app
+WORKDIR /app
+
+# Railway PORT ဖြင့် Built-in Server ကို စတင်ခြင်း
+CMD ["php", "-S", "0.0.0.0:80"]
