@@ -2,15 +2,25 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$host = getenv('MYSQLHOST') ?: 'localhost';
-$user = getenv('MYSQLUSER') ?: 'root';
-$pass = getenv('MYSQLPASSWORD') ?: '';
-$dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
+// Railway က MYSQL_URL ပေးထားရင် အဲ့ဒါကိုသုံးမယ်၊ မရှိရင် Local (XAMPP) အတွက် သုံးမယ်
+$database_url = getenv('MYSQL_URL');
 
-// Railway မှာဆိုရင် Railway ကပေးတဲ့ PORT ကို ယူမယ်၊ Local မှာဆိုရင် 3307 ကို သုံးမယ်
-$port = getenv('MYSQLPORT') ? intval(getenv('MYSQLPORT')) : 3307;
+if ($database_url) {
+    $db = parse_url($database_url);
+    $host = $db["host"];
+    $user = $db["user"];
+    $pass = $db["pass"];
+    $dbname = ltrim($db["path"], "/");
+    $port = $db["port"];
+} else {
+    $host = 'localhost';
+    $user = 'root';
+    $pass = '';
+    $dbname = 'my_website_db';
+    $port = 3307;
+}
 
-$conn = new mysqli($host, $user, $pass, $dbname, $port);
+$conn = new mysqli($host, $user, $pass, $dbname, (int)$port);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
