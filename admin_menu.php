@@ -69,14 +69,14 @@ $result = $conn->query($sql);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    if ($result && $result->num_rows > 0) {
-                        while($row = $result->fetch_assoc()) {
-                            $img_src = (!empty($row['item_image']) && file_exists("uploads/" . $row['item_image'])) 
-                                       ? "uploads/" . $row['item_image'] 
-                                       : "https://via.placeholder.com/60";
-                            ?>
-                            <tr>
+<?php
+if ($result && $result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        // file_exists ကို ဖြုတ်ပြီး Database ထဲမှာ ပုံနာမည်ရှိရင် ယူသုံးခိုင်းခြင်း
+        $img_src = !empty($row['item_image']) 
+            ? "uploads/" . $row['item_image'] 
+            : "https://via.placeholder.com/60";
+?>                            <tr>
                                 <td><img src="<?php echo $img_src; ?>" class="table-img" alt="food"></td>
                                 <td class="fw-bold"><?php echo htmlspecialchars($row['item_name']); ?></td>
 <td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['category'] ?? ''); ?></span></td>
