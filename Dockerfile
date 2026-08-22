@@ -1,13 +1,11 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
-# Install mysqli and other required extensions
+# mysqli extension ကို တပ်ဆင်ခြင်း
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Configure Apache to listen on port 8080 (Railway requirement)
-RUN sed -i 's/80/8080/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
+# ဖိုင်များကို ကူးယူခြင်း
+COPY . /app
+WORKDIR /app
 
-# Copy project files to Apache root
-COPY . /var/www/html/
-
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
+# Railway က ပေးမည့် PORT variable ကို တိုက်ရိုက်အသုံးပြုခြင်း
+CMD sh -c "php -S 0.0.0.0:\$PORT"
