@@ -79,7 +79,7 @@ $result = $conn->query($sql);
                             <tr>
                                 <td><img src="<?php echo $img_src; ?>" class="table-img" alt="food"></td>
                                 <td class="fw-bold"><?php echo htmlspecialchars($row['item_name']); ?></td>
-                                <td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['category']); ?></span></td>
+<td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['category'] ?? ''); ?></span></td>
                                 <td class="text-danger fw-bold"><?php echo number_format($row['price']); ?> MMK</td>
                                 <td>
                                     <a href="admin_edit_item.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning fw-bold text-dark">✏️ ပြင်မည်</a>
