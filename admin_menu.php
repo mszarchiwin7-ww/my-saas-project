@@ -76,16 +76,23 @@ if ($result && $result->num_rows > 0) {
         $img_src = !empty($row['item_image']) 
             ? "uploads/" . $row['item_image'] 
             : "https://via.placeholder.com/60";
-?>                            <tr>
+<tr>
                                 <td><img src="<?php echo $img_src; ?>" class="table-img" alt="food"></td>
                                 <td class="fw-bold"><?php echo htmlspecialchars($row['item_name']); ?></td>
+                                
+                                <!-- 🌟 ဤနေရာတွင် category ကို ထည့်ပေးပါ -->
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <?php echo isset($row['category']) && !empty($row['category']) ? htmlspecialchars($row['category']) : 'Uncategorized'; ?>
+                                    </span>
+                                </td>
+
                                 <td class="text-danger fw-bold"><?php echo number_format($row['price']); ?> MMK</td>
                                 <td>
                                     <a href="admin_edit_item.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning fw-bold text-dark">✏️ ပြင်မည်</a>
                                     <a href="admin_menu.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger fw-bold ms-1" onclick="return confirm('သေချာပေါက် ဖျက်မှာပါလားဗျာ?')">🗑️ ဖျက်မည်</a>
                                 </td>
-                            </tr>
-                            <?php
+                            </tr>                            <?php
                         }
                     } else {
                         echo "<tr><td colspan='5' class='text-muted py-4'>လောလောဆယ် မီနူးထဲမှာ ဘာဟင်းပွဲမှ မရှိသေးပါဗျာ။</td></tr>";
