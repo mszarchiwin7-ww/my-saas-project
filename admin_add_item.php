@@ -82,7 +82,7 @@ if (isset($_POST['add_item'])) {
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="" enctype="multipart/form-data">
+<form method="POST" action="" enctype="multipart/form-data" autocomplete="off">
             <div class="mb-3">
                 <label class="form-label fw-bold text-secondary">🍲 ဟင်းလျာအမည်</label>
                 <input type="text" name="item_name" class="form-control" placeholder="ဥပမာ - ရှမ်းခေါက်ဆွဲ" required style="border-radius: 8px;">
