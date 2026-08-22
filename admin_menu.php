@@ -1,5 +1,5 @@
 <?php
-// Railway Environment Variables တွေကို အသုံးပြု၍ ချိတ်ဆက်ခြင်း
+error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);// Railway Environment Variables တွေကို အသုံးပြု၍ ချိတ်ဆက်ခြင်း
 $host = getenv('MYSQLHOST') ?: 'localhost';
 $user = getenv('MYSQLUSER') ?: 'root';
 $password = getenv('MYSQLPASSWORD') ?: '';
