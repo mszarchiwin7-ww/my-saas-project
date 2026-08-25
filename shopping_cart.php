@@ -38,8 +38,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'place_order_ajax') {
     $status = 'Pending';
 
     if (!empty($cart_items) && is_array($cart_items)) {
-        $stmt = $conn->prepare("INSERT INTO customer_orders (table_number, item_name, price, order_comment, status) VALUES (?, ?, ?, ?, ?)");
-        
+$stmt = $conn->prepare("INSERT INTO customer_orders (table_no, item_name, price, order_comment, status) VALUES (?, ?, ?, ?, ?)");        
         if ($stmt) {
             foreach ($cart_items as $item) {
                 $qty = isset($item['quantity']) ? intval($item['quantity']) : 1;
