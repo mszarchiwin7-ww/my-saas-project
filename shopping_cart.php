@@ -1,12 +1,15 @@
 <?php
-// 1. Session စတင်ခြင်း
+// ၁။ Output Buffer စတင်ခြင်း (မလိုအပ်တဲ့ Output တွေ JSON ထဲ ပါမသွားစေရန်)
+ob_start();
+
+// 2. Session စတင်ခြင်း
 session_start();
 
-// Error များကို Browser ထဲ မပေါ်စေရန် တားဆီးခြင်း (JSON Format မပျက်စေရန်)
+// Error များကို Browser ထဲ မပေါ်စေရန် တားဆီးခြင်း
 error_reporting(0);
 ini_set('display_errors', 0);
 
-// 2. ဒေတာဘေ့စ် ချိတ်ဆက်ခြင်း
+// 3. ဒေတာဘေ့စ် ချိတ်ဆက်ခြင်း
 $host = getenv('MYSQLHOST') ?: 'localhost';
 $user = getenv('MYSQLUSER') ?: 'root';
 $password = getenv('MYSQLPASSWORD') ?: '';
@@ -14,23 +17,20 @@ $dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
 $port = getenv('MYSQLPORT') ?: '3306';
 
 $conn = new mysqli($host, $user, $password, $dbname, $port);
-$conn->set_charset("utf8mb4");
 
-if ($conn->connect_error) {
-    if (isset($_POST['action']) && $_POST['action'] == 'place_order_ajax') {
+// 🌟 AJAX Request ဖြစ်နေလျှင် ချက်ချင်း JSON ထုတ်ပြီး ဖြတ်ထုတ်ရန်
+if (isset($_POST['action']) && $_POST['action'] == 'place_order_ajax') {
+    // ယခင်ထွက်ထားသမျှ Buffer များကို အကုန်ရှင်းလင်းခြင်း
+    ob_clean();
+    header('Content-Type: application/json; charset=utf-8');
+    
+    if ($conn->connect_error) {
         echo json_encode(['status' => 'error', 'message' => 'DB Connection Failed']);
         exit;
     }
-    die("Connection failed: " . $conn->connect_error);
-}
 
-$raw_table = isset($_GET['table']) ? $_GET['table'] : '1';
-$current_table = trim(str_ireplace('Table', '', $raw_table));
+    $conn->set_charset("utf8mb4");
 
-// 🌟 [အဓိက Backend Logic] JavaScript ကနေ AJAX နဲ့ ပို့လိုက်တဲ့ အော်ဒါများကို လက်ခံပြီး Database ထဲ ထည့်ခြင်း
-if (isset($_POST['action']) && $_POST['action'] == 'place_order_ajax') {
-    header('Content-Type: application/json');
-    
     $cart_data_json = isset($_POST['cart_data']) ? $_POST['cart_data'] : '[]';
     $cart_items = json_decode($cart_data_json, true);
     $table_num = isset($_POST['table_number']) ? $_POST['table_number'] : 'Table 1';
@@ -60,9 +60,16 @@ if (isset($_POST['action']) && $_POST['action'] == 'place_order_ajax') {
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Empty cart']);
     }
+    
     $conn->close();
     exit;
 }
+
+$raw_table = isset($_GET['table']) ? $_GET['table'] : '1';
+$current_table = trim(str_ireplace('Table', '', $raw_table));
+
+// ပုံမှန် Page အတွက် Buffer ကို ပိတ်ပြီး HTML ထွက်ခွင့်ပေးခြင်း
+ob_end_flush();
 ?>
 <!DOCTYPE html>
 <html lang="en">
