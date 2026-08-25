@@ -2,7 +2,14 @@
 // get_live_orders.php
 session_start();
 
-$conn = new mysqli("localhost", "root", "", "my_website_db", 3307);
+// Railway Database ချိတ်ဆက်ခြင်း
+$host = getenv('MYSQLHOST') ?: 'localhost';
+$user = getenv('MYSQLUSER') ?: 'root';
+$password = getenv('MYSQLPASSWORD') ?: '';
+$dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
+$port = getenv('MYSQLPORT') ?: '3306';
+
+$conn = new mysqli($host, $user, $password, $dbname, $port);
 $conn->set_charset("utf8mb4");
 
 if ($conn->connect_error) {
@@ -60,7 +67,7 @@ if ($result_cashier->num_rows > 0) {
             </td>
             <td>
                 <a href='view_bill.php?table_number={$t_url}' target='_blank' class='btn btn-sm btn-info fw-bold text-white me-1'>🖨️ ဘေလ်ထုတ်ရန်</a>
-                <a href='menu_dashboard.php?clear_table={$t_url}' class='btn btn-sm btn-danger fw-bold'>💵 Сာရင်းပိတ်မည်</a>
+                <a href='menu_dashboard.php?clear_table={$t_url}' class='btn btn-sm btn-danger fw-bold'>💵 ငွေရှင်းမည်</a>
             </td>
         </tr>";
     }
