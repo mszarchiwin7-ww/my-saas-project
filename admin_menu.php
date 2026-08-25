@@ -203,7 +203,7 @@ if (isset($_GET['delete_item_id'])) {
                 <div class="col-md-4 mb-4">
                     <div class="card p-3 shadow-sm bg-light border-0">
                         <h5 class="fw-bold text-primary mb-3">➕ ဟင်းပွဲအသစ်ထည့်ရန်</h5>
-                        <form action="" method="POST">
+                        <form action="" method="POST" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label class="small fw-bold mb-1">ဟင်းလျာအမည်</label>
                                 <input type="text" name="item_name" class="form-control" required>
@@ -217,11 +217,12 @@ if (isset($_GET['delete_item_id'])) {
                                 <select name="category" class="form-select">
                                     <option value="အကင်">🔥 အကင်</option>
                                     <option value="အသုပ်">🥗 အသုပ်</option>
+                                    <option value="အသုပ်">🥗 အရည်</option>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="small fw-bold mb-1">ပုံ Link (Image URL) ထည့်ရန်</label>
-                                <input type="text" name="item_image" class="form-control" placeholder="https://example.com/image.jpg" required>
+                                <label class="small fw-bold mb-1">ပုံတင်ရန်</label>
+                                <input type="file" name="item_image" class="form-control" accept="image/*" required>
                             </div>
                             <button type="submit" name="add_item" class="btn btn-primary w-100 fw-bold">ဒေတာသိမ်းမည်</button>
                         </form>
@@ -243,10 +244,10 @@ if (isset($_GET['delete_item_id'])) {
                         $result = $conn->query("SELECT * FROM restaurant_menu ORDER BY id DESC");
                         if ($result && $result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
-                                $img_src = !empty($row['item_image']) ? $row['item_image'] : "https://via.placeholder.com/60?text=No+Image";
+                                $img_src = !empty($row['item_image']) ? "uploads/" . $row['item_image'] : "https://via.placeholder.com/60?text=No+Image";
                         ?>
                             <tr>
-                                <form action="" method="POST">
+                                <form action="" method="POST" enctype="multipart/form-data">
                                     <input type="hidden" name="item_id" value="<?php echo $row['id']; ?>">
                                     <td>
                                         <img src="<?php echo $img_src; ?>" class="menu-thumb" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;" onerror="this.src='https://via.placeholder.com/60?text=Error'">
@@ -258,6 +259,8 @@ if (isset($_GET['delete_item_id'])) {
                                         <select name="category" class="form-select form-select-sm">
                                             <option value="အကင်" <?php if($row['category']=='အကင်') echo 'selected'; ?>>🔥 အကင်</option>
                                             <option value="အသုပ်" <?php if($row['category']=='အသုပ်') echo 'selected'; ?>>🥗 အသုပ်</option>
+                                            <option value="အရည်" <?php if($row['category']=='အရည်') echo 'selected'; ?>>🥗 အရည်</option>
+
                                         </select>
                                     </td>
                                     <td>
@@ -281,7 +284,7 @@ if (isset($_GET['delete_item_id'])) {
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 function switchPage(pageId, element) {
     document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('active'));
