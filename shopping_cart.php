@@ -3,8 +3,19 @@
 session_start();
 
 // 2. ဒေတာဘေ့စ် ချိတ်ဆက်ခြင်း
-$conn = new mysqli("localhost", "root", "", "my_website_db", 3307);
+$host = getenv('MYSQLHOST') ?: 'localhost';
+$user = getenv('MYSQLUSER') ?: 'root';
+$password = getenv('MYSQLPASSWORD') ?: '';
+$dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
+$port = getenv('MYSQLPORT') ?: '3306';
+
+$conn = new mysqli($host, $user, $password, $dbname, $port);
 $conn->set_charset("utf8mb4");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
 
 $raw_table = isset($_GET['table']) ? $_GET['table'] : '1';
 $current_table = trim(str_ireplace('Table', '', $raw_table));
