@@ -6,9 +6,8 @@ ob_start();
 session_start();
 
 // Error များကို Browser ထဲ မပေါ်စေရန် တားဆီးခြင်း
-error_reporting(0);
-ini_set('display_errors', 0);
-
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 // 3. ဒေတာဘေ့စ် ချိတ်ဆက်ခြင်း
 $host = getenv('MYSQLHOST') ?: 'localhost';
 $user = getenv('MYSQLUSER') ?: 'root';
