@@ -1,4 +1,6 @@
 <?php
+error_reporting(0);
+ini_set('display_errors', 0);
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);// Railway Environment Variables တွေကို အသုံးပြု၍ ချိတ်ဆက်ခြင်း
 $host = getenv('MYSQLHOST') ?: 'localhost';
 $user = getenv('MYSQLUSER') ?: 'root';
@@ -57,7 +59,7 @@ $result = $conn->query($sql);
             <a href="admin_add_item.php" class="btn btn-success fw-bold">+ ဟင်းလျာအသစ်ထည့်မည်</a>
         </div>
 
-        <div class="table-responsive">
+<div class="table-responsive">
             <table class="table table-hover table-bordered text-center align-middle">
                 <thead class="table-dark">
                     <tr>
@@ -72,7 +74,6 @@ $result = $conn->query($sql);
                 <?php
                 if ($result && $result->num_rows > 0) {
                     while($row = $result->fetch_assoc()) {
-                        // file_exists ကို ဖြုတ်ပြီး Database ထဲမှာ ပုံနာမည်ရှိရင် ယူသုံးခိုင်းခြင်း
                         $img_src = !empty($row['item_image']) 
                             ? "uploads/" . $row['item_image'] 
                             : "https://via.placeholder.com/60"; 
@@ -87,7 +88,7 @@ $result = $conn->query($sql);
                                     </span>
                                 </td>
 
-                                <td class="text-danger fw-bold"><?php echo number_format($row['price']); ?> MMK</td>
+                                <td class="text-danger fw-bold"><?php echo isset($row['price']) ? number_format($row['price']) : '0'; ?> MMK</td>
                                 <td>
                                     <a href="admin_edit_item.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning fw-bold text-dark">✏️ ပြင်မည်</a>
                                     <a href="admin_menu.php?delete_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger fw-bold ms-1" onclick="return confirm('သေချာပေါက် ဖျက်မှာပါလားဗျာ?')">🗑️ ဖျက်မည်</a>
@@ -102,9 +103,6 @@ $result = $conn->query($sql);
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
-
 </body>
 </html>
 <?php $conn->close(); ?>
