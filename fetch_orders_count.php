@@ -1,11 +1,13 @@
 <?php
-// Database ချိတ်ဆက်ခြင်း
-$servername = "localhost:3307";
-$username = "root";
-$password = "";
-$dbname = "my_website_db";
+// Railway Database ချိတ်ဆက်ခြင်း
+$host = getenv('MYSQLHOST') ?: 'localhost';
+$user = getenv('MYSQLUSER') ?: 'root';
+$password = getenv('MYSQLPASSWORD') ?: '';
+$dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
+$port = getenv('MYSQLPORT') ?: '3306';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($host, $user, $password, $dbname, $port);
+$conn->set_charset("utf8mb4");
 
 if ($conn->connect_error) {
     die("Error: " . $conn->connect_error);
@@ -16,7 +18,7 @@ $sql = "SELECT COUNT(id) AS total_orders FROM `orders` WHERE `status` = 'Pending
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
 
-// JavaScript ဆီကို ကိန်းဂဏန်းသီးသန့် (ဥပမာ- 3) လှမ်းပြန်ဖြေပေးခြင်း
+// JavaScript ဆီကို ကိန်းဂဏန်းသီးသန့် လှမ်းပြန်ဖြေပေးခြင်း
 echo $row['total_orders'];
 
 $conn->close();
