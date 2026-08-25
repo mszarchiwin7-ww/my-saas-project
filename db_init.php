@@ -54,8 +54,7 @@ $table_num = isset($_GET['table']) ? intval($_GET['table']) : 1;
             $item_id = $row['id'];
             $item_name = htmlspecialchars($row['item_name']);
             $price = $row['price'];
-            $img_src = !empty($row['item_image']) ? "uploads/" . $row['item_image'] : "https://via.placeholder.com/100?text=Error";
-    ?>
+$img_src = !empty($row['item_image']) ? $row['item_image'] : "https://via.placeholder.com/100?text=No+Image";    ?>
         <div class="food-card">
             <img src="<?php echo $img_src; ?>" class="food-img" onerror="this.src='https://via.placeholder.com/100?text=Error'">
             <h5><?php echo $item_name; ?></h5>

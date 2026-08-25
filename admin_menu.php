@@ -195,7 +195,7 @@ if (isset($_GET['delete_item_id'])) {
         </div>
     </div>
 
-    <!-- Admin Menu Edit Section -->
+<!-- Admin Menu Edit Section -->
     <div id="page-admin-edit" class="page-section">
         <div class="dashboard-box">
             <h3 class="fw-bold text-dark mb-4"><i class="fa-solid fa-utensils text-warning me-2"></i> ဟင်းလျာများနှင့် BBQ များ စီမံခန့်ခွဲခြင်း</h3>
@@ -203,37 +203,66 @@ if (isset($_GET['delete_item_id'])) {
                 <div class="col-md-4 mb-4">
                     <div class="card p-3 shadow-sm bg-light border-0">
                         <h5 class="fw-bold text-primary mb-3">➕ ဟင်းပွဲအသစ်ထည့်ရန်</h5>
-                        <form action="" method="POST" enctype="multipart/form-data">
-                            <div class="mb-3"><label class="small fw-bold mb-1">ဟင်းလျာအမည်</label><input type="text" name="item_name" class="form-control" required></div>
-                            <div class="mb-3"><label class="small fw-bold mb-1">ဈေးနှုန်း</label><input type="number" name="price" class="form-control" required></div>
-                            <div class="mb-3"><label class="small fw-bold mb-1">အမျိုးအစား</label><select name="category" class="form-select"><option value="အကင်">🔥 အကင်</option><option value="အသုပ်">🥗 အသုပ်</option></select></div>
-                            <div class="mb-3"><label class="small fw-bold mb-1">ပုံတင်ရန်</label><input type="file" name="item_image" class="form-control" accept="image/*" required></div>
+                        <form action="" method="POST">
+                            <div class="mb-3">
+                                <label class="small fw-bold mb-1">ဟင်းလျာအမည်</label>
+                                <input type="text" name="item_name" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small fw-bold mb-1">ဈေးနှုန်း</label>
+                                <input type="number" name="price" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small fw-bold mb-1">အမျိုးအစား</label>
+                                <select name="category" class="form-select">
+                                    <option value="အကင်">🔥 အကင်</option>
+                                    <option value="အသုပ်">🥗 အသုပ်</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small fw-bold mb-1">ပုံ Link (Image URL) ထည့်ရန်</label>
+                                <input type="text" name="item_image" class="form-control" placeholder="https://example.com/image.jpg" required>
+                            </div>
                             <button type="submit" name="add_item" class="btn btn-primary w-100 fw-bold">ဒေတာသိမ်းမည်</button>
                         </form>
                     </div>
                 </div>
                 <div class="col-md-8">
                     <table class="table table-hover align-middle text-center bg-white border rounded">
-                        <thead class="table-dark"><tr><th>ဟင်းပွဲပုံ</th><th>အမည်</th><th>အမျိုးအစား</th><th>ဈေးနှုန်း</th><th>လုပ်ဆောင်ချက်</th></tr></thead>
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ဟင်းပွဲပုံ</th>
+                                <th>အမည်</th>
+                                <th>အမျိုးအစား</th>
+                                <th>ဈေးနှုန်း</th>
+                                <th>လုပ်ဆောင်ချက်</th>
+                            </tr>
+                        </thead>
                         <tbody>
                         <?php
                         $result = $conn->query("SELECT * FROM restaurant_menu ORDER BY id DESC");
                         if ($result && $result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
-                                $img_src = !empty($row['item_image']) ? "uploads/" . $row['item_image'] : "https://via.placeholder.com/60";
+                                $img_src = !empty($row['item_image']) ? $row['item_image'] : "https://via.placeholder.com/60?text=No+Image";
                         ?>
                             <tr>
-                                <form action="" method="POST" enctype="multipart/form-data">
+                                <form action="" method="POST">
                                     <input type="hidden" name="item_id" value="<?php echo $row['id']; ?>">
-                                    <td><img src="<?php echo $img_src; ?>" class="menu-thumb"></td>
-                                    <td><input type="text" name="item_name" class="form-control form-control-sm" value="<?php echo htmlspecialchars($row['item_name']); ?>" required></td>
+                                    <td>
+                                        <img src="<?php echo $img_src; ?>" class="menu-thumb" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;" onerror="this.src='https://via.placeholder.com/60?text=Error'">
+                                    </td>
+                                    <td>
+                                        <input type="text" name="item_name" class="form-control form-control-sm" value="<?php echo htmlspecialchars($row['item_name']); ?>" required>
+                                    </td>
                                     <td>
                                         <select name="category" class="form-select form-select-sm">
                                             <option value="အကင်" <?php if($row['category']=='အကင်') echo 'selected'; ?>>🔥 အကင်</option>
                                             <option value="အသုပ်" <?php if($row['category']=='အသုပ်') echo 'selected'; ?>>🥗 အသုပ်</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" name="price" class="form-control form-control-sm" value="<?php echo $row['price']; ?>" required></td>
+                                    <td>
+                                        <input type="number" name="price" class="form-control form-control-sm" value="<?php echo $row['price']; ?>" required>
+                                    </td>
                                     <td>
                                         <button type="submit" name="update_item" class="btn btn-sm btn-success"><i class="fa-solid fa-check"></i></button>
                                         <a href="?delete_item_id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('ဖျက်မှာလား?')"><i class="fa-solid fa-trash"></i></a>
@@ -252,9 +281,7 @@ if (isset($_GET['delete_item_id'])) {
             </div>
         </div>
     </div>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 function switchPage(pageId, element) {
     document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('active'));
