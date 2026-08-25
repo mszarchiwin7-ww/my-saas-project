@@ -2,6 +2,10 @@
 // 1. Session စတင်ခြင်း
 session_start();
 
+// Error များကို Browser ထဲ မပေါ်စေရန် တားဆီးခြင်း (JSON Format မပျက်စေရန်)
+error_reporting(0);
+ini_set('display_errors', 0);
+
 // 2. ဒေတာဘေ့စ် ချိတ်ဆက်ခြင်း
 $host = getenv('MYSQLHOST') ?: 'localhost';
 $user = getenv('MYSQLUSER') ?: 'root';
@@ -13,41 +17,50 @@ $conn = new mysqli($host, $user, $password, $dbname, $port);
 $conn->set_charset("utf8mb4");
 
 if ($conn->connect_error) {
+    if (isset($_POST['action']) && $_POST['action'] == 'place_order_ajax') {
+        echo json_encode(['status' => 'error', 'message' => 'DB Connection Failed']);
+        exit;
+    }
     die("Connection failed: " . $conn->connect_error);
 }
-
 
 $raw_table = isset($_GET['table']) ? $_GET['table'] : '1';
 $current_table = trim(str_ireplace('Table', '', $raw_table));
 
-$order_success = false;
-
-// 🌟 [အဓိက Backend Logic] JavaScript ကနေ AJAX နဲ့ ပို့လိုက်တဲ့ အော်ဒါတွေကို လက်ခံပြီး Database ထဲ ထည့်ခြင်း
+// 🌟 [အဓိက Backend Logic] JavaScript ကနေ AJAX နဲ့ ပို့လိုက်တဲ့ အော်ဒါများကို လက်ခံပြီး Database ထဲ ထည့်ခြင်း
 if (isset($_POST['action']) && $_POST['action'] == 'place_order_ajax') {
-    $cart_items = json_decode($_POST['cart_data'], true);
-    $table_num = $_POST['table_number'];
+    header('Content-Type: application/json');
     
-    // 🌟 [UPDATE] AJAX က ပို့လိုက်သော ဝယ်သူ၏ Comment အား ဖတ်ယူခြင်း
+    $cart_data_json = isset($_POST['cart_data']) ? $_POST['cart_data'] : '[]';
+    $cart_items = json_decode($cart_data_json, true);
+    $table_num = isset($_POST['table_number']) ? $_POST['table_number'] : 'Table 1';
+    
     $order_comment = isset($_POST['order_comment']) ? trim($_POST['order_comment']) : "";
     $status = 'Pending';
 
-    if (!empty($cart_items) && !$conn->connect_error) {
-        // 🌟 [UPDATE] INSERT ထဲတွင် order_comment ကိုပါ သိမ်းဆည်းရန် ထည့်သွင်းခြင်း
+    if (!empty($cart_items) && is_array($cart_items)) {
         $stmt = $conn->prepare("INSERT INTO customer_orders (table_number, item_name, price, order_comment, status) VALUES (?, ?, ?, ?, ?)");
         
-        foreach ($cart_items as $item) {
-            // အရေအတွက်အလိုက် ဒေတာဘေ့စ်ထဲ loop ပတ်ထည့်ခြင်း
-            for ($i = 0; $i < $item['quantity']; $i++) {
-                // "ssdss" -> table_num(string), name(string), price(double), order_comment(string), status(string)
-                $stmt->bind_param("ssdss", $table_num, $item['name'], $item['price'], $order_comment, $status);
-                $stmt->execute();
+        if ($stmt) {
+            foreach ($cart_items as $item) {
+                $qty = isset($item['quantity']) ? intval($item['quantity']) : 1;
+                $name = isset($item['name']) ? $item['name'] : '';
+                $price = isset($item['price']) ? floatval($item['price']) : 0;
+
+                for ($i = 0; $i < $qty; $i++) {
+                    $stmt->bind_param("ssdss", $table_num, $name, $price, $order_comment, $status);
+                    $stmt->execute();
+                }
             }
+            $stmt->close();
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Prepare failed']);
         }
-        $stmt->close();
-        echo json_encode(['status' => 'success']);
     } else {
-        echo json_encode(['status' => 'error']);
+        echo json_encode(['status' => 'error', 'message' => 'Empty cart']);
     }
+    $conn->close();
     exit;
 }
 ?>
@@ -102,7 +115,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'place_order_ajax') {
 </div>
 
 <script>
-// LocalStorage မှ ကတ်ဒေတာကို ယူခြင်း
 let cart = JSON.parse(localStorage.getItem('restaurant_cart')) || [];
 
 function renderCart() {
@@ -156,10 +168,8 @@ function changeQty(id, amount) {
     }
 }
 
-// 🚀 [AJAX Function] ခလုတ်နှိပ်လိုက်လျှင် နောက်ကွယ်မှ Database (`customer_orders`) ထဲသို့ တိုက်ရိုက်သိမ်းဆည်းခြင်း
 function submitOrderViaAJAX() {
     const checkoutBtn = document.getElementById('final-checkout-btn');
-    // 🌟 စာသားရိုက်ကွင်းထဲမှ comment ကို လှမ်းဖတ်ခြင်း
     const commentInput = document.getElementById('order-comment-input').value;
 
     checkoutBtn.disabled = true;
@@ -169,60 +179,39 @@ function submitOrderViaAJAX() {
     formData.append('action', 'place_order_ajax');
     formData.append('cart_data', JSON.stringify(cart));
     formData.append('table_number', 'Table ' + '<?php echo $current_table; ?>');
-    
-    // 🌟 AJAX Payload ထဲသို့ ဝယ်သူမှတ်ချက်ပါ တွဲထည့်ပေးလိုက်ခြင်း
     formData.append('order_comment', commentInput);
 
     fetch('shopping_cart.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.status === 'success') {
             alert('🎉 အော်ဒါ တင်ခြင်း အောင်မြင်ပါသည်ဗျာ! Dashboard သို့ ပေးပို့ပြီးပါပြီ။');
-            localStorage.removeItem('restaurant_cart'); // Cart ကို ရှင်းလင်းမည်
+            localStorage.removeItem('restaurant_cart');
             window.location.href = 'index.php?table=' + encodeURIComponent('<?php echo $current_table; ?>');
         } else {
-            alert('❌ တစ်စုံတစ်ခု မှားယွင်းနေပါသည်။ ပြန်လည် ကြိုးစားပေးပါ။');
+            alert('❌ တစ်စုံတစ်ခု မှားယွင်းနေပါသည်။ (Error: ' + (data.message || 'unknown') + ')');
             checkoutBtn.disabled = false;
             checkoutBtn.innerHTML = "🚀 စားပွဲခုံကနေ အော်ဒါတင်မည်";
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('❌ Network ချက်ဆက်မှု အခက်အခဲ ရှိနေပါသည်။');
+        alert('❌ Network ချိတ်ဆက်မှု အခက်အခဲ ရှိနေပါသည်။ (JSON Parse Error)');
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = "🚀 စားပွဲခုံကနေ အော်ဒါတင်မည်";
     });
 }
 
-// စတင်ပွင့်ချိန်တွင် ကတ်ကို ပြသခြင်း
 renderCart();
-</script>
-<script>
-function saveToLocalStorage(id, name, price) {
-    let quantity = document.getElementById('qty-' + id).value;
-    let comment = document.getElementById('comment-' + id).value;
-    
-    let cart = JSON.parse(localStorage.getItem('restaurant_cart')) || [];
-    
-    // ကတ်ထဲသို့ ထည့်ခြင်း
-    cart.push({ id: id, name: name, price: price, quantity: parseInt(quantity), comment: comment });
-    localStorage.setItem('restaurant_cart', JSON.stringify(cart));
-    
-    alert('ခြင်းတောင်းထဲသို့ ထည့်ပြီးပါပြီ!');
-    
-    // Controls တွေကို ပြန်ပိတ်မယ်
-    document.getElementById('controls-' + id).style.display = 'none';
-    document.getElementById('btn-' + id).style.display = 'block';
-}
-
-function showControls(id) {
-    document.getElementById('btn-' + id).style.display = 'none';
-    document.getElementById('controls-' + id).style.display = 'block';
-}
-// (အရင်ပေးထားတဲ့ increment/decrement function များကိုလည်း ထည့်ထားပါ)
 </script>
 </body>
 </html>
+<?php if(isset($conn)) { $conn->close(); } ?>
