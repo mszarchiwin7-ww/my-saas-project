@@ -53,7 +53,7 @@ $stmt = $conn->prepare("INSERT INTO customer_orders (table_no, item_name, price,
             $stmt->close();
             echo json_encode(['status' => 'success']);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Prepare failed']);
+            echo json_encode(['status' => 'error', 'message' => $conn->error]);s
         }
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Empty cart']);
