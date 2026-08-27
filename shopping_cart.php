@@ -1,10 +1,15 @@
 <?php
-include 'db_init.php';
-// Your database connection file include here if needed, e.g., include 'db.php';
+include 'db_init.php'; // Database connection ဖိုင် (သင့်နာမည်အတိုင်းပြင်ပါ)
+
+// Content-Type က JSON လாတာကို လက်ခံဖို့နဲ့ POST method ဟုတ်မဟုတ် စစ်ဆေးရန်
+$data = json_decode(file_get_contents('php://input'), true);
+
+$cart_items = isset($data['cart']) ? $data['cart'] : [];
+$table_num = isset($data['table_no']) ? $data['table_no'] : '1';
+$order_comment = ''; // လိုအပ်ရင် comment ထည့်ရန်
+$status = 'pending';
 
 if (!empty($cart_items) && is_array($cart_items)) {
-    // Database ထဲမှာ table_no (သို့မဟုတ် table_number) ဘယ်ဟာကို သုံးထားလဲ အတည်ပြုပါ
-    // အကယ်၍ table_number ကိုသုံးရင် အောက်ပါ query မှာ table_no နေရာမှာ table_number လို့ ပြောင်းပေးပါ
     $stmt = $conn->prepare("INSERT INTO customer_orders (table_no, item_name, price, order_comment, status) VALUES (?, ?, ?, ?, ?)");        
     
     if ($stmt) {
@@ -19,7 +24,7 @@ if (!empty($cart_items) && is_array($cart_items)) {
             }
         }
         $stmt->close();
-        echo json_encode(['status' => 'success']);
+        echo json_encode(['status' => 'success', 'message' => 'Order placed successfully']);
     } else {
         echo json_encode(['status' => 'error', 'message' => $conn->error]);
     }
@@ -27,6 +32,8 @@ if (!empty($cart_items) && is_array($cart_items)) {
     echo json_encode(['status' => 'error', 'message' => 'Empty cart']);
 }
 
-$conn->close();
+if ($conn) {
+    $conn->close();
+}
 exit;
 ?>
