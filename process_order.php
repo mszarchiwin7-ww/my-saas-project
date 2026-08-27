@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json');
 
-// Railway ရော Local (XAMPP) မှာပါ အမှားအယွင်းမရှိ ချိတ်ဆက်ရန်
 $host = getenv('MYSQLHOST') ?: 'localhost';
 $user = getenv('MYSQLUSER') ?: 'root';
 $pass = getenv('MYSQLPASSWORD') ?: '';
@@ -30,7 +29,8 @@ $cart_items = isset($data['cart']) ? $data['cart'] : [];
 $table_num = isset($data['table_no']) ? $data['table_no'] : '1';
 
 if (!empty($cart_items) && is_array($cart_items)) {
-    $stmt = $conn->prepare("INSERT INTO customer_orders (table_no, item_name, price, order_comment, status) VALUES (?, ?, ?, ?, ?)");
+    // 🌟 table_no ကို table_number သို့ ပြင်ဆင်ထားပါသည်
+    $stmt = $conn->prepare("INSERT INTO customer_orders (table_number, item_name, price, order_comment, status) VALUES (?, ?, ?, ?, ?)");
     
     if ($stmt) {
         $order_comment = '';
