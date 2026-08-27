@@ -34,7 +34,7 @@ if (!empty($cart_items) && is_array($cart_items)) {
     
     if ($stmt) {
         $order_comment = '';
-        $status = 'pending';
+        $status = 'Pending';
         
         foreach ($cart_items as $item) {
             $name = $item['name'];
