@@ -17,7 +17,7 @@ if ($conn->connect_error) {
 }
 
 // ၁။ Kitchen Table အတွက် (Pending နှင့် Cooking) အော်ဒါများ ဆွဲထုတ်ခြင်း
-$sql_kitchen = "SELECT * FROM customer_orders WHERE status IN ('Pending', 'Cooking') ORDER BY created_at DESC, id DESC";
+$sql_kitchen = "SELECT * FROM customer_orders WHERE LOWER(status) IN ('pending', 'cooking') ORDER BY id DESC";
 $result_kitchen = $conn->query($sql_kitchen);
 
 $kitchen_html = "";
