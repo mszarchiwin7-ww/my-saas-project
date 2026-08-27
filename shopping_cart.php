@@ -1,5 +1,5 @@
 <?php
-include 'db.php';
+include 'db_init.php';
 // Your database connection file include here if needed, e.g., include 'db.php';
 
 if (!empty($cart_items) && is_array($cart_items)) {
