@@ -1,222 +1,31 @@
 <?php
-// ၁။ Output Buffer စတင်ခြင်း (မလိုအပ်တဲ့ Output တွေ JSON ထဲ ပါမသွားစေရန်)
-ob_start();
+// Your database connection file include here if needed, e.g., include 'db.php';
 
-// 2. Session စတင်ခြင်း
-session_start();
-
-// Error များကို Browser ထဲ မပေါ်စေရန် တားဆီးခြင်း
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-// 3. ဒေတာဘေ့စ် ချိတ်ဆက်ခြင်း
-$host = getenv('MYSQLHOST') ?: 'localhost';
-$user = getenv('MYSQLUSER') ?: 'root';
-$password = getenv('MYSQLPASSWORD') ?: '';
-$dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
-$port = getenv('MYSQLPORT') ?: '3306';
-
-$conn = new mysqli($host, $user, $password, $dbname, $port);
-
-// 🌟 AJAX Request ဖြစ်နေလျှင် ချက်ချင်း JSON ထုတ်ပြီး ဖြတ်ထုတ်ရန်
-if (isset($_POST['action']) && $_POST['action'] == 'place_order_ajax') {
-    // ယခင်ထွက်ထားသမျှ Buffer များကို အကုန်ရှင်းလင်းခြင်း
-    ob_clean();
-    header('Content-Type: application/json; charset=utf-8');
+if (!empty($cart_items) && is_array($cart_items)) {
+    // Database ထဲမှာ table_no (သို့မဟုတ် table_number) ဘယ်ဟာကို သုံးထားလဲ အတည်ပြုပါ
+    // အကယ်၍ table_number ကိုသုံးရင် အောက်ပါ query မှာ table_no နေရာမှာ table_number လို့ ပြောင်းပေးပါ
+    $stmt = $conn->prepare("INSERT INTO customer_orders (table_no, item_name, price, order_comment, status) VALUES (?, ?, ?, ?, ?)");        
     
-    if ($conn->connect_error) {
-        echo json_encode(['status' => 'error', 'message' => 'DB Connection Failed']);
-        exit;
-    }
+    if ($stmt) {
+        foreach ($cart_items as $item) {
+            $qty = isset($item['quantity']) ? intval($item['quantity']) : 1;
+            $name = isset($item['name']) ? $item['name'] : '';
+            $price = isset($item['price']) ? floatval($item['price']) : 0;
 
-    $conn->set_charset("utf8mb4");
-
-    $cart_data_json = isset($_POST['cart_data']) ? $_POST['cart_data'] : '[]';
-    $cart_items = json_decode($cart_data_json, true);
-    $table_num = isset($_POST['table_number']) ? $_POST['table_number'] : 'Table 1';
-    
-    $order_comment = isset($_POST['order_comment']) ? trim($_POST['order_comment']) : "";
-    $status = 'Pending';
-
-    if (!empty($cart_items) && is_array($cart_items)) {
-$stmt = $conn->prepare("INSERT INTO customer_orders (table_no, item_name, price, order_comment, status) VALUES (?, ?, ?, ?, ?)");        
-if ($stmt) {
-    foreach ($cart_items as $item) {
-        $qty = isset($item['quantity']) ? intval($item['quantity']) : 1;
-        $name = isset($item['name']) ? $item['name'] : '';
-        $price = isset($item['price']) ? floatval($item['price']) : 0;
-
-        for ($i = 0; $i < $qty; $i++) {
-            $stmt->bind_param("ssdss", $table_num, $name, $price, $order_comment, $status);
-            $stmt->execute();
+            for ($i = 0; $i < $qty; $i++) {
+                $stmt->bind_param("ssdss", $table_num, $name, $price, $order_comment, $status);
+                $stmt->execute();
+            }
         }
-    }
-    $stmt->close();
-    echo json_encode(['status' => 'success']);
-} else {
-    echo json_encode(['status' => 'error', 'message' => $conn->error]);
-}
+        $stmt->close();
+        echo json_encode(['status' => 'success']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Empty cart']);
+        echo json_encode(['status' => 'error', 'message' => $conn->error]);
     }
-    
-    $conn->close();
-    exit;
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Empty cart']);
 }
 
-$raw_table = isset($_GET['table']) ? $_GET['table'] : '1';
-$current_table = trim(str_ireplace('Table', '', $raw_table));
-
-// ပုံမှန် Page အတွက် Buffer ကို ပိတ်ပြီး HTML ထွက်ခွင့်ပေးခြင်း
-ob_end_flush();
+$conn->close();
+exit;
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart - Taste of Myanmar 🛒</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f4f6f8; font-family: 'Pyidaungsu', sans-serif; }
-        .cart-card { border: none; border-radius: 15px; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .checkout-btn { background: linear-gradient(135deg, #ff9f43, #ff6b6b); color: white; border: none; border-radius: 12px; font-weight: bold; padding: 12px; }
-        .checkout-btn:disabled { background: #cbd5e0 !important; }
-    </style>
-</head>
-<body>
-
-<div class="container my-5" style="max-width: 600px;">
-    <div class="d-flex align-items-center mb-4">
-        <a href="index.php?table=<?php echo urlencode($current_table); ?>" class="btn btn-outline-secondary btn-sm me-3" style="border-radius: 10px;">
-            ⬅️ မီနူးသို့ ပြန်သွားရန်
-        </a>
-        <h4 class="fw-bold mb-0">🛒 သင်ရွေးချယ်ထားသော အော်ဒါများ</h4>
-    </div>
-
-    <div class="alert alert-warning text-center fw-bold mb-4" style="border-radius: 12px;">
-        🪑 စားပွဲခုံနံပါတ်: <span class="text-danger fs-5"><?php echo htmlspecialchars($current_table); ?></span>
-    </div>
-
-    <div class="card p-3 cart-card mb-4">
-        <div id="cart-items-container">
-            <div class="text-center text-muted py-4">ခြင်းတောင်းထဲတွင် မည်သည့်ဟင်းလျာမျှ မရှိသေးပါဗျာ။</div>
-        </div>
-        
-        <hr>
-        <div class="d-flex justify-content-between align-items-center fw-bold fs-5 px-2">
-            <span>စုစုပေါင်းကျသင့်ငွေ:</span>
-            <span class="text-danger"><span id="total-price-display">0</span> MMK</span>
-        </div>
-    </div>
-
-    <div class="mb-4 text-start bg-white p-3 rounded-3 shadow-sm border border-light-subtle">
-        <label class="form-label fw-bold text-dark">📝 စိတ်ကြိုက်တောင်းဆိုချက်မှတ်ချက် (Comment)</label>
-        <textarea id="order-comment-input" class="form-control" rows="2" placeholder="ဥပမာ - အစပ်လျှော့ပါ၊ အချိုမှုန့်မထည့်ပါနဲ့၊ အကြွပ်ကြော်ပေးပါ..."></textarea>
-    </div>
-
-    <button type="button" id="final-checkout-btn" class="btn checkout-btn w-100 fs-5" onclick="submitOrderViaAJAX()" disabled>
-        🚀 စားပွဲခုံကနေ အော်ဒါတင်မည်
-    </button>
-</div>
-
-<script>
-let cart = JSON.parse(localStorage.getItem('restaurant_cart')) || [];
-
-function renderCart() {
-    const container = document.getElementById('cart-items-container');
-    const totalDisplay = document.getElementById('total-price-display');
-    const checkoutBtn = document.getElementById('final-checkout-btn');
-    
-    if (cart.length === 0) {
-        container.innerHTML = '<div class="text-center text-muted py-4">ခြင်းတောင်းထဲတွင် မည်သည့်ဟင်းလျာမျှ မရှိသေးပါဗျာ။</div>';
-        totalDisplay.innerText = '0';
-        checkoutBtn.disabled = true;
-        return;
-    }
-
-    checkoutBtn.disabled = false;
-    let html = '';
-    let grandTotal = 0;
-
-    cart.forEach((item, index) => {
-        let itemTotal = item.price * item.quantity;
-        grandTotal += itemTotal;
-        html += `
-            <div class="d-flex justify-content-between align-items-center py-3 ${index > 0 ? 'border-top' : ''}">
-                <div>
-                    <h6 class="fw-bold mb-1">${item.name}</h6>
-                    <small class="text-muted">${new Intl.NumberFormat().format(item.price)} MMK</small>
-                </div>
-                <div class="d-flex align-items-center">
-                    <button class="btn btn-sm btn-light border px-2 py-1" onclick="changeQty('${item.id}', -1)">-</button>
-                    <span class="mx-3 fw-bold">${item.quantity}</span>
-                    <button class="btn btn-sm btn-light border px-2 py-1" onclick="changeQty('${item.id}', 1)">+</button>
-                    <span class="ms-4 fw-bold text-dark" style="min-width: 80px; text-align: right;">${new Intl.NumberFormat().format(itemTotal)}</span>
-                </div>
-            </div>
-        `;
-    });
-
-    container.innerHTML = html;
-    totalDisplay.innerText = new Intl.NumberFormat().format(grandTotal);
-}
-
-function changeQty(id, amount) {
-    let item = cart.find(i => i.id === id);
-    if (item) {
-        item.quantity += amount;
-        if (item.quantity <= 0) {
-            cart = cart.filter(i => i.id !== id);
-        }
-        localStorage.setItem('restaurant_cart', JSON.stringify(cart));
-        renderCart();
-    }
-}
-
-function submitOrderViaAJAX() {
-    const checkoutBtn = document.getElementById('final-checkout-btn');
-    const commentInput = document.getElementById('order-comment-input').value;
-
-    checkoutBtn.disabled = true;
-    checkoutBtn.innerHTML = "⏳ အော်ဒါပို့နေပါသည်... ခေတ္တစောင့်ပါ...";
-
-    const formData = new FormData();
-    formData.append('action', 'place_order_ajax');
-    formData.append('cart_data', JSON.stringify(cart));
-    formData.append('table_number', 'Table ' + '<?php echo $current_table; ?>');
-    formData.append('order_comment', commentInput);
-
-    fetch('shopping_cart.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === 'success') {
-            alert('🎉 အော်ဒါ တင်ခြင်း အောင်မြင်ပါသည်ဗျာ! Dashboard သို့ ပေးပို့ပြီးပါပြီ။');
-            localStorage.removeItem('restaurant_cart');
-            window.location.href = 'index.php?table=' + encodeURIComponent('<?php echo $current_table; ?>');
-        } else {
-            alert('❌ တစ်စုံတစ်ခု မှားယွင်းနေပါသည်။ (Error: ' + (data.message || 'unknown') + ')');
-            checkoutBtn.disabled = false;
-            checkoutBtn.innerHTML = "🚀 စားပွဲခုံကနေ အော်ဒါတင်မည်";
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Network ချိတ်ဆက်မှု အခက်အခဲ ရှိနေပါသည်။ (JSON Parse Error)');
-        checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = "🚀 စားပွဲခုံကနေ အော်ဒါတင်မည်";
-    });
-}
-
-renderCart();
-</script>
-</body>
-</html>
-<?php if(isset($conn)) { $conn->close(); } ?>
