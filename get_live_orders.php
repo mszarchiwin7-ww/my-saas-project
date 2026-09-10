@@ -48,7 +48,7 @@ if ($result_kitchen->num_rows > 0) {
 }
 
 // ၂။ Cashier Table အတွက် (Served) အော်ဒါများ ဆွဲထုတ်ခြင်း
-$sql_cashier = "SELECT table_number, GROUP_CONCAT(item_name SEPARATOR ', ') AS all_items, SUM(price) AS total_bill FROM customer_orders WHERE status = 'Served' GROUP BY table_number ORDER BY table_number ASC";
+$sql_cashier = "SELECT table_number, GROUP_CONCAT(item_name SEPARATOR ', ') AS all_items, SUM(price) AS total_bill FROM customer_orders WHERE LOWER(status) = 'served' GROUP BY table_number ORDER BY table_number ASC";
 $result_cashier = $conn->query($sql_cashier);
 
 $cashier_html = "";
@@ -76,7 +76,7 @@ if ($result_cashier->num_rows > 0) {
 }
 
 // ၃။ 🌟 [အရေးကြီးဆုံးအပိုင်း] Pending ဖြစ်နေသော အော်ဒါစုစုပေါင်းနှင့် နောက်ဆုံးဝင်လာသော ခုံကို ရှာဖွေခြင်း
-$sql_count = "SELECT id, table_number FROM customer_orders WHERE status = 'Pending' ORDER BY id DESC";
+$sql_count = "SELECT id, table_number FROM customer_orders WHERE LOWER(status) = 'pending' ORDER BY id DESC";
 $res_count = $conn->query($sql_count);
 
 $new_order_count = 0;
