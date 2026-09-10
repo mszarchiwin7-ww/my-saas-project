@@ -450,7 +450,7 @@ if (strpos($img_file, 'http') === 0) {
                             <a href="menu_dashboard.php?delete_item_id=<?php echo $item['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('ဖျက်မှာလား?')"><i class="fa-solid fa-trash"></i></a>
                         </td>
                     </form>                                </tr>
-                            <?php } } ?>
+                            <?php  } ?>
                         </tbody>
                     </table>
                 </div>
