@@ -1,7 +1,7 @@
 <?php
 // ၁။ ဒေတာဘေ့စ် ချိတ်ဆက်ခြင်း
 error_reporting(0);
-ini_set('display_errors', 0);
+ml_ini_set = ini_set('display_errors', 0);
 $host = getenv('MYSQLHOST') ?: 'localhost';
 $user = getenv('MYSQLUSER') ?: 'root';
 $password = getenv('MYSQLPASSWORD') ?: '';
@@ -37,21 +37,44 @@ if (isset($_POST['update_item'])) {
     $item_name = $_POST['item_name'];
     $category = $_POST['category'];
     $price = doubleval($_POST['price']);
-    $image_name = $row['item_image']; // ပုံအဟောင်းကို အရင်ယူထားမည်
+    $image_name = $row['item_image']; // ပုံအဟောင်း URL ကို အရင်ယူထားမည်
 
-    // အကယ်၍ ဓာတ်ပုံအသစ် ရွေးချယ်တင်လိုက်ပါက
+    // အကယ်၍ ဓာတ်ပုံအသစ် ရွေးချယ်တင်လိုက်ပါက Cloudinary သို့ တင်မည်
     if (isset($_FILES['item_image']) && $_FILES['item_image']['error'] == 0) {
-        $target_dir = "uploads/";
+        $fileTmpPath = $_FILES['item_image']['tmp_name'];
         
-        // ပုံဟောင်းရှိရင် server ပေါ်ကနေ အရင်ဖျက်ပစ်မည်
-        if (!empty($row['item_image']) && file_exists($target_dir . $row['item_image'])) {
-            unlink($target_dir . $row['item_image']);
+        // Railway Variables မှ Cloudinary Credentials များကို ယူသုံးခြင်း
+        $cloudName = getenv('CLOUDINARY_CLOUD_NAME') ?: 'h5zgszsj';
+        $apiKey = getenv('CLOUDINARY_API_KEY') ?: '985463654552948';
+        $apiSecret = getenv('CLOUDINARY_API_SECRET') ?: ''; // Railway ထဲက Secret ကို ယူသုံးပါမည်
+        
+        $timestamp = time();
+        $signatureString = "timestamp=" . $timestamp . $apiSecret;
+        $signature = sha1($signatureString);
+        
+        // cURL ဖြင့် Cloudinary သို့ ပုံတင်ခြင်း
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://api.cloudinary.com/v1_1/' . $cloudName . '/image/upload');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        
+        $postData = [
+            'file' => new CURLFile($fileTmpPath),
+            'api_key' => $apiKey,
+            'timestamp' => $timestamp,
+            'signature' => $signature
+        ];
+        
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        $responseData = json_decode($response, true);
+        
+        if (isset($responseData['secure_url'])) {
+            // Cloudinary ကပေးသည့် Permanent URL အစစ်ကို သုံးမည်
+            $image_name = $responseData['secure_url'];
         }
-
-        // ပုံအသစ်ကို နာမည်ပြောင်းပြီး တင်ခြင်း
-        $file_ext = pathinfo($_FILES["item_image"]["name"], PATHINFO_EXTENSION);
-        $image_name = time() . "_" . uniqid() . "." . $file_ext;
-        move_uploaded_file($_FILES["item_image"]["tmp_name"], $target_dir . $image_name);
     }
 
     // ဒေတာဘေ့စ်ထဲတွင် Update ပြုလုပ်ခြင်း
@@ -123,9 +146,17 @@ if (isset($_POST['update_item'])) {
                 <div class="mt-2">
                     <span class="text-muted d-block small">လက်ရှိအသုံးပြုထားသောပုံရိပ် -</span>
                     <?php 
-                    $img_src = (!empty($row['item_image']) && file_exists("uploads/" . $row['item_image'])) 
-                               ? "uploads/" . $row['item_image'] 
-                               : "https://via.placeholder.com/100";
+                    // Cloudinary URL ဖြစ်နေပါက တိုက်ရိုက်ပြမည်၊ ပုံဟောင်း Local ဖြစ်နေပါက စစ်ဆေးမည်
+                    $current_img = $row['item_image'];
+                    if (!empty($current_img)) {
+                        if (strpos($current_img, 'http') === 0) {
+                            $img_src = $current_img; // Cloudinary URL
+                        } else {
+                            $img_src = file_exists("uploads/" . $current_img) ? "uploads/" . $current_img : "https://via.placeholder.com/100";
+                        }
+                    } else {
+                        $img_src = "https://via.placeholder.com/100";
+                    }
                     ?>
                     <img src="<?php echo $img_src; ?>" class="current-img" alt="current food">
                 </div>
