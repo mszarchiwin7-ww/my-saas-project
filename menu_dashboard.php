@@ -350,7 +350,7 @@ $monthly_sales = array_fill(1, 12, 0);
 
 // ၂။ Database ထဲမှ လက်ရှိနှစ်အတွက် လအလိုက် ရောင်းရငွေများကို ပေါင်းမည်
 $current_year = date('Y');
-$sql = "SELECT MONTH(created_at) as m, SUM(price) as total FROM customer_orders WHERE YEAR(created_at) = '$current_year' GROUP BY MONTH(created_at)";
+$sql = "SELECT MONTH(order_date) as m, SUM(price) as total FROM customer_orders WHERE YEAR(order_date) = '$current_year' GROUP BY MONTH(order_date)";
 $result = $conn->query($sql);
 
 if ($result) {
