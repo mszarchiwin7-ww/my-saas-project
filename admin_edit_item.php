@@ -1,7 +1,8 @@
 <?php
 // ၁။ ဒေတာဘေ့စ် ချိတ်ဆက်ခြင်း
-error_reporting(0);
-ml_ini_set = ini_set('display_errors', 0);
+error_reporting(E_ALL); // အမှားအယွင်းများ သိနိုင်ရန် ခဏဖွင့်ထားမည်
+ini_set('display_errors', 1);
+
 $host = getenv('MYSQLHOST') ?: 'localhost';
 $user = getenv('MYSQLUSER') ?: 'root';
 $password = getenv('MYSQLPASSWORD') ?: '';
@@ -14,7 +15,6 @@ $conn->set_charset("utf8mb4");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
 $message = "";
 $message_type = "";
 $row = [];
