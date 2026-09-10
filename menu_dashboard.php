@@ -422,24 +422,22 @@ if ($result) {
     <table class="table table-hover align-middle text-center bg-white border rounded">
         <thead class="table-dark"><tr><th>ဟင်းပွဲပုံ</th><th>အမည်</th><th>အမျိုးအစား</th><th>ဈေးနှုန်း</th><th>လုပ်ဆောင်ချက်</th></tr></thead>
         <tbody>
-            <?php if ($result_food_items && $result_food_items->num_rows > 0) {
-                while ($item = $result_food_items->fetch_assoc()) { 
-                    
-                    // 💡 ပြင်ဆင်လိုက်သောအပိုင်း- ဒေတာဘေ့စ်ထဲမှာ uploads/ ပါပြီးသားမို့လို့ တိုက်ရိုက်စစ်ဆေးပါသည်
-// 💡 အဟောင်းရော အသစ်ရော လမ်းကြောင်းမှန်အောင် အလိုအလျောက် စစ်ဆေးပေးမည့်စနစ်
-                    $img_file = !empty($item['item_image']) ? $item['item_image'] : 'uploads/default.jpg';
+<?php
+$img_file = !empty($item['item_image']) ? $item['item_image'] : '';
 
-                    // အကယ်၍ database ထဲက စာသားထဲမှာ 'uploads/' မပါနေပါက ရှေ့ကနေ ထည့်ပေါင်းပေးမည်
-                    if (strpos($img_file, 'uploads/') === false) {
-                        $img_src = "uploads/" . $img_file;
-                    } else {
-                        $img_src = $img_file;
-                    }
-
-                    // ပုံ တကယ်ရှိမရှိ ထပ်မံစစ်ဆေးပြီး မရှိပါက default.jpg ပြမည်
-                    if (!file_exists($img_src)) {
-                        $img_src = "uploads/default.jpg";
-                    }                    ?>
+// အကယ်၍ Cloudinary URL ဖြစ်ပါက (http သို့မဟုတ် https ပါလျှင်) တိုက်ရိုက်သုံးမည်
+if (strpos($img_file, 'http') === 0) {
+    $img_src = $img_file;
+} elseif (!empty($img_file) && file_exists("uploads/" . $img_file)) {
+    // ရှေးဟောင်း Local ဖိုင်ဖြစ်ပါက uploads/ ပေါင်းမည်
+    $img_src = "uploads/" . $img_file;
+} else {
+    // ပုံ လုံးဝမရှိပါက Default ပုံ သို့မဟုတ် SVG ကိုပြမည်
+    $img_src = "uploads/default.jpg";
+}
+?>
+<!-- ပြီးလျှင် ပုံပြမည့်နေရာတွင် ဤကဲ့သို့ ထည့်ပါ -->
+<img src="<?php echo $img_src; ?>" class="your-image-class" alt="food item">
                 <tr>
                     <form action="menu_dashboard.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
