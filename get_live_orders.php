@@ -3,11 +3,12 @@
 session_start();
 
 // Railway Database ချိတ်ဆက်ခြင်း
-$host = getenv('MYSQLHOST') ?: 'localhost';
-$user = getenv('MYSQLUSER') ?: 'root';
-$password = getenv('MYSQLPASSWORD') ?: '';
-$dbname = getenv('MYSQLDATABASE') ?: 'my_website_db';
-$port = getenv('MYSQLPORT') ?: '3306';
+// Railway Database Connection
+$host = $_ENV['MYSQLHOST'] ?? getenv('MYSQLHOST') ?: 'localhost';
+$user = $_ENV['MYSQLUSER'] ?? getenv('MYSQLUSER') ?: 'root';
+$password = $_ENV['MYSQLPASSWORD'] ?? getenv('MYSQLPASSWORD') ?: '';
+$dbname = $_ENV['MYSQLDATABASE'] ?? getenv('MYSQLDATABASE') ?: 'my_website_db';
+$port = $_ENV['MYSQLPORT'] ?? getenv('MYSQLPORT') ?: '3306';
 
 $conn = new mysqli($host, $user, $password, $dbname, $port);
 $conn->set_charset("utf8mb4");

@@ -2,14 +2,19 @@
 // menu_dashboard.php
 session_start();
 
-// Database Connection
-$conn = new mysqli("localhost", "root", "", "my_website_db", 3307);
+// Railway Database Connection
+$host = $_ENV['MYSQLHOST'] ?? getenv('MYSQLHOST') ?: 'localhost';
+$user = $_ENV['MYSQLUSER'] ?? getenv('MYSQLUSER') ?: 'root';
+$password = $_ENV['MYSQLPASSWORD'] ?? getenv('MYSQLPASSWORD') ?: '';
+$dbname = $_ENV['MYSQLDATABASE'] ?? getenv('MYSQLDATABASE') ?: 'my_website_db';
+$port = $_ENV['MYSQLPORT'] ?? getenv('MYSQLPORT') ?: '3306';
+
+$conn = new mysqli($host, $user, $password, $dbname, $port);
 $conn->set_charset("utf8mb4");
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
 // ===================================================================
 // 🛠️ ADMIN MENU EDIT - ADD ITEM LOGIC (သန့်ရှင်းရေးလုပ်ပြီး)
 // ===================================================================
