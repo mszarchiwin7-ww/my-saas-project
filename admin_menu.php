@@ -286,6 +286,30 @@ if (isset($_GET['delete_item_id'])) {
     </div>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    // --- LIVE ORDERS FETCHING SCRIPT ---
+function fetchLiveOrders() {
+    $.ajax({
+        url: 'get_live_orders.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            // Kitchen Table ကို update လုပ်ရန်
+            if(data.kitchen_html) {
+                $('#kitchen-orders-table tbody').html(data.kitchen_html);
+            }
+            // Cashier Table ကို update လုပ်ရန်
+            if(data.cashier_html) {
+                $('#page-cashier tbody').html(data.cashier_html);
+            }
+        }
+    });
+}
+
+// စာမျက်နှာစဖွင့်ချင်း တစ်ခါဆွဲမည်၊ ပြီးလျှင် ၃ စက္ကန့်တစ်ကြိမ် အလိုအလျောက် စစ်ဆေးမည်
+$(document).ready(function() {
+    fetchLiveOrders();
+    setInterval(fetchLiveOrders, 3000);
+});
 function switchPage(pageId, element) {
     document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('active'));
     if(element) { element.classList.add('active'); } 
