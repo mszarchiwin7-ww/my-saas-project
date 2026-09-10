@@ -61,8 +61,7 @@ $sql_insert = "INSERT INTO restaurant_menu (item_name, price, category, item_ima
 // ===================================================================
 if (isset($_GET['check_new_orders'])) {
     header('Content-Type: application/json');
-    $sql_check = "SELECT COUNT(*) as new_count FROM customer_orders WHERE status = 'Pending' AND created_at >= NOW() - INTERVAL 5 SECOND";
-    $res_check = $conn->query($sql_check);
+$sql_check = "SELECT COUNT(*) as new_count FROM customer_orders WHERE status = 'Pending'";    $res_check = $conn->query($sql_check);
     $row_check = $res_check->fetch_assoc();
     echo json_encode(['new_orders' => intval($row_check['new_count']) > 0]);
     exit();
@@ -143,7 +142,7 @@ $result_kitchen = $conn->query($sql_kitchen);
 $sql_cashier = "SELECT table_number, GROUP_CONCAT(item_name SEPARATOR '<br>') AS all_items, GROUP_CONCAT(price SEPARATOR ',') AS all_prices, SUM(price) AS total_bill FROM customer_orders WHERE status = 'Served' GROUP BY table_number ORDER BY table_number ASC";
 $result_cashier = $conn->query($sql_cashier);
 
-$sql_history = "SELECT table_number, GROUP_CONCAT(item_name SEPARATOR ', ') AS item_list, SUM(price) AS paid_total, MAX(created_at) AS order_date FROM customer_orders WHERE status = 'Paid' GROUP BY table_number, DATE(created_at) ORDER BY order_date DESC";
+$sql_history = "SELECT table_number, GROUP_CONCAT(item_name SEPARATOR ', ') AS item_list, SUM(price) AS paid_total, MAX(id) AS order_date FROM customer_orders WHERE status = 'Paid' GROUP BY table_number ORDER BY order_date DESC";
 $result_history = $conn->query($sql_history);
 
 // Sales Report ဒေတာ
