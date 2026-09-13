@@ -13,8 +13,11 @@ if (isset($_POST['generate'])) {
     $table_number = trim($_POST['table_number']);
     
     if (!empty($table_number)) {
-        $target_link = "http://192.168.1.107/my-saas-project/index.php?table=" . urlencode($table_number);
-        
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "https";
+$host = $_SERVER['HTTP_HOST'];
+$base_url = "$protocol://$host" . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . "/index.php";
+
+$target_link = $base_url . "?table=" . urlencode($table_number);        
         // 🌟 QRServer API သို့ ပြောင်းလဲထားခြင်း (၁၀၀% ပုံအမှန်ပေါ်စေရန်)
         $qr_image_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . urlencode($target_link);
     }
