@@ -22,40 +22,19 @@ if (isset($_POST['add_item'])) {
     $item_name = mysqli_real_escape_string($conn, $_POST['item_name']);
     $price = (int)$_POST['price'];
     $category = mysqli_real_escape_string($conn, $_POST['category']);
-    
-    $target_dir = "uploads/";
-    if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true);
-    }
-    
-    $image_name = time() . '_' . basename($_FILES["item_image"]["name"]);
-    $target_file = $target_dir . $image_name;
+    $item_image = mysqli_real_escape_string($conn, $_POST['item_image']); // URL စာသားကို တိုက်ရိုက်လက်ခံမည်
 
-    // ပုံအစစ် ဟုတ်မဟုတ် စစ်ဆေးခြင်း
-    $check = getimagesize($_FILES["item_image"]["tmp_name"]);
-    if($check !== false) {
-        if (move_uploaded_file($_FILES["item_image"]["tmp_name"], $target_file)) {
-            
-            // 📝 ကွက်တိ ပြင်ဆင်ပြီးသား SQL Insert Query
-// 📝 status column ကို ဖြုတ်ထားသော SQL Insert Query အမှန်
-$sql_insert = "INSERT INTO restaurant_menu (item_name, price, category, item_image) VALUES ('$item_name', '$price', '$category', '$target_file')";            
-            if ($conn->query($sql_insert) === TRUE) {
-                header("Location: menu_dashboard.php?page_tab=admin-edit&success=1");
-                exit();
-            } else {
-                echo "<script>alert('Error: " . $conn->error . "'); window.location.href='menu_dashboard.php?page_tab=admin-edit';</script>";
-                exit();
-            }
-        } else {
-            echo "<script>alert('စိတ်မရှိပါနဲ့... ပုံတင်ရတာ မအောင်မြင်ပါဘူး။'); window.location.href='menu_dashboard.php?page_tab=admin-edit';</script>";
-            exit();
-        }
+    // 📝 SQL Insert Query (URL ကို သိမ်းဆည်းရန်)
+    $sql_insert = "INSERT INTO restaurant_menu (item_name, price, category, item_image) VALUES ('$item_name', '$price', '$category', '$item_image')";            
+    
+    if ($conn->query($sql_insert) === TRUE) {
+        header("Location: menu_dashboard.php?page_tab=admin-edit&success=1");
+        exit();
     } else {
-        echo "<script>alert('တင်လိုက်သောဖိုင်သည် ပုံအစစ်မဟုတ်ပါ။'); window.location.href='menu_dashboard.php?page_tab=admin-edit';</script>";
+        echo "<script>alert('Error: " . $conn->error . "'); window.location.href='menu_dashboard.php?page_tab=admin-edit';</script>";
         exit();
     }
 }
-
 // ===================================================================
 // ⚡ Real-time AJAX API - အော်ဒါအသစ် စစ်ဆေးသည့်စနစ်
 // ===================================================================
