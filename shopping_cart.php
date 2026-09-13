@@ -70,9 +70,9 @@ if (cart.length === 0) {
         html += `<li class='list-group-item d-flex justify-content-between align-items-center'>
                     <div>
                         <h6 class='my-0'>${item.name}</h6>
-                        <small class='text-muted'>ဈေးနှုန်း: ${item.price} MMK x ${item.quantity}</small>
+                        <small class='text-muted'>ဈေးနှုန်း: ${item.price} Baht x ${item.quantity}</small>
                     </div>
-                    <span class='text-danger fw-bold'>${subtotal} MMK</span>
+                    <span class='text-danger fw-bold'>${subtotal} Baht</span>
                     <button class='btn btn-sm btn-outline-danger' onclick='removeItem(${index})'>ဖျက်ရန်</button>
                  </li>`;
     });
