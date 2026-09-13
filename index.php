@@ -65,12 +65,18 @@ $result = $conn->query($query);
 </div>
 
 <div class="container mt-4">
-    <?php while ($row = $result->fetch_assoc()): 
-        // Improved image logic: Check if file exists in 'uploads/'
-        $img_path = !empty($row['item_image']) ? 'uploads/' . $row['item_image'] : '';
-        $display_img = (file_exists($img_path)) ? $img_path : 'https://via.placeholder.com/100?text=No+Image';
+<?php while ($row = $result->fetch_assoc()): 
+        $img_file = !empty($row['item_image']) ? $row['item_image'] : '';
+
+        if (strpos($img_file, 'http') === 0) {
+            $display_img = $img_file;
+        } elseif (!empty($img_file) && file_exists("uploads/" . $img_file)) {
+            $display_img = "uploads/" . $img_file;
+        } else {
+            $display_img = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c";
+        }
     ?>
-    <div class="food-card">
+        <div class="food-card">
         <img src="<?php echo $display_img; ?>" class="food-img" onerror="this.src='https://via.placeholder.com/100?text=Error'">
         <h5><?php echo htmlspecialchars($row['item_name']); ?></h5>
         <p class="text-danger fw-bold"><?php echo number_format($row['price']); ?> MMK</p>
