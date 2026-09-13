@@ -168,7 +168,49 @@ if (isset($_POST['update_item'])) {
         </form>
     </div>
 </div>
-
+<div class="container mt-5">
+    <h3 class="fw-bold mb-3">📋 မီနူးစာရင်းများ</h3>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ဟင်းပွဲပုံ</th>
+                <th>အမည်</th>
+                <th>အမျိုးအစား</th>
+                <th>ဈေးနှုန်း</th>
+                <th>လုပ်ဆောင်ချက်</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $result_all = $conn->query("SELECT * FROM restaurant_menu");
+            if ($result_all && $result_all->num_rows > 0) {
+                while ($item = $result_all->fetch_assoc()) {
+                    // ပုံလင့်ခ် မှန်မမှန် စစ်ဆေးခြင်း
+                    $current_img = $item['item_image'];
+                    if (!empty($current_img)) {
+                        $img_src = (strpos($current_img, 'http') === 0) ? $current_img : "uploads/" . $current_img;
+                    } else {
+                        $img_src = "https://via.placeholder.com/100";
+                    }
+            ?>
+            <tr>
+                <td><img src="<?php echo htmlspecialchars($img_src); ?>" width="50" height="50" style="object-fit: cover; border-radius: 8px;"></td>
+                <td><?php echo htmlspecialchars($item['item_name']); ?></td>
+                <td><?php echo htmlspecialchars($item['category']); ?></td>
+                <td><?php echo number_format($item['price']); ?> MMK</td>
+                <td>
+                    <a href="admin_edit.php?id=<?php echo $item['id']; ?>" class="btn btn-warning btn-sm">ပြင်ဆင်မည်</a>
+                </td>
+            </tr>
+            <?php 
+                }
+            } else {
+                echo "<tr><td colspan='5' class='text-center'>မီနူးဒေတာ မရှိသေးပါ။</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
 <?php $conn->close(); ?>
