@@ -246,7 +246,7 @@ if ($server_ip === '127.0.0.1' || $server_ip === '::1') {
                         <?php } ?>
                     </tbody>
                 </table>
-            </div> </div> </div> ```    <div id="page-cashier" class="page-section">
+            </div> </div> </div>    <div id="page-cashier" class="page-section">
         <div class="dashboard-box">
             <h3 class="fw-bold text-success mb-4"><i class="fa-solid fa-calculator me-2"></i> Ngwe Shinn Rarn Sar Pwal Khon Myar (Cashier)</h3>
             <table class="table table-bordered table-striped align-middle text-center">
