@@ -420,40 +420,56 @@ if ($result) {
                 </div>
 <div class="col-md-8">
     <table class="table table-hover align-middle text-center bg-white border rounded">
-        <thead class="table-dark"><tr><th>ဟင်းပွဲပုံ</th><th>အမည်</th><th>အမျိုးအစား</th><th>ဈေးနှုန်း</th><th>လုပ်ဆောင်ချက်</th></tr></thead>
+        <thead class="table-dark">
+            <tr>
+                <th>ဟင်းပွဲပုံ</th>
+                <th>အမည်</th>
+                <th>အမျိုးအစား</th>
+                <th>ဈေးနှုန်း</th>
+                <th>လုပ်ဆောင်ချက်</th>
+            </tr>
+        </thead>
         <tbody>
-<?php
-$img_file = !empty($item['item_image']) ? $item['item_image'] : '';
+            <?php 
+            // Database ထဲက menu items တွေကို loop ပတ်ထုတ်ခြင်း (အကယ်၍ $items variable သုံးထားလျှင်)
+            if (!empty($items)) {
+                foreach ($items as $item) {
+                    $img_file = !empty($item['item_image']) ? $item['item_image'] : '';
 
-// အကယ်၍ Cloudinary URL ဖြစ်ပါက (http သို့မဟုတ် https ပါလျှင်) တိုက်ရိုက်သုံးမည်
-if (strpos($img_file, 'http') === 0) {
-    $img_src = $img_file;
-} elseif (!empty($img_file) && file_exists("uploads/" . $img_file)) {
-    // ရှေးဟောင်း Local ဖိုင်ဖြစ်ပါက uploads/ ပေါင်းမည်
-    $img_src = "uploads/" . $img_file;
-} else {
-    // ပုံ လုံးဝမရှိပါက Default ပုံ သို့မဟုတ် SVG ကိုပြမည်
-    $img_src = "uploads/default.jpg";
-}
-?>
-<!-- ပြီးလျှင် ပုံပြမည့်နေရာတွင် ဤကဲ့သို့ ထည့်ပါ -->
-<img src="<?php echo $img_src; ?>" class="your-image-class" alt="food item">
+                    // အကယ်၍ Cloudinary URL ဖြစ်ပါက သို့မဟုတ် Local ဖြစ်ပါက စစ်ဆေးခြင်း
+                    if (strpos($img_file, 'http') === 0) {
+                        $img_src = $img_file;
+                    } elseif (!empty($img_file) && file_exists("uploads/" . $img_file)) {
+                        $img_src = "uploads/" . $img_file;
+                    } else {
+                        $img_src = "uploads/default.jpg";
+                    }
+            ?>
                 <tr>
                     <form action="menu_dashboard.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
                         <td><img src="<?php echo $img_src; ?>" class="menu-thumb" width="50" style="object-fit: cover; border-radius: 8px;"></td>
                         <td><input type="text" name="item_name" class="form-control form-control-sm" value="<?php echo htmlspecialchars($item['item_name']); ?>" required></td>
-                        <td><select name="category" class="form-select form-select-sm"><option value="အကင်" <?php echo ($item['category'] == 'အကင်')?'selected':''; ?>>🔥 အကင်</option><option value="အသုပ်" <?php echo ($item['category'] == 'အသုပ်')?'selected':''; ?>>🥗 အသုပ်</option></select></td>
+                        <td>
+                            <select name="category" class="form-select form-select-sm">
+                                <option value="အကင်" <?php echo ($item['category'] == 'အကင်') ? 'selected' : ''; ?>>🔥 အကင်</option>
+                                <option value="အသုပ်" <?php echo ($item['category'] == 'အသုပ်') ? 'selected' : ''; ?>>🥗 အသုပ်</option>
+                            </select>
+                        </td>
                         <td><input type="number" name="price" class="form-control form-control-sm" value="<?php echo $item['price']; ?>" required></td>
                         <td>
                             <button type="submit" name="update_item" class="btn btn-sm btn-success"><i class="fa-solid fa-check"></i></button>
                             <a href="menu_dashboard.php?delete_item_id=<?php echo $item['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('ဖျက်မှာလား?')"><i class="fa-solid fa-trash"></i></a>
                         </td>
-                    </form>                                </tr>
-                            <?php  } ?>
-                        </tbody>
-                    </table>
-                </div>
+                    </form>
+                </tr>
+            <?php 
+                } 
+            } 
+            ?>
+        </tbody>
+    </table>
+</div>
             </div>
         </div>
     </div>
