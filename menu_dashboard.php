@@ -415,24 +415,22 @@ if ($result) {
         </thead>
         <tbody>
             <?php 
-            // Database ထဲက menu items တွေကို loop ပတ်ထုတ်ခြင်း (အကယ်၍ $items variable သုံးထားလျှင်)
-            if (!empty($items)) {
-                foreach ($items as $item) {
-$img_file = !empty($item['item_image']) ? $item['item_image'] : '';
+            if ($result_food_items && $result_food_items->num_rows > 0) {
+                while ($item = $result_food_items->fetch_assoc()) {
+                    $img_file = !empty($item['item_image']) ? $item['item_image'] : '';
 
-// URL လင့်ခ် (http သို့မဟုတ် https) စတင်ပါက တိုက်ရိုက်ယူမည်၊ မဟုတ်ပါက uploads folder သို့မဟုတ် default ကိုသုံးမည်
-if (strpos($img_file, 'http') === 0) {
-    $img_src = $img_file;
-} elseif (!empty($img_file) && file_exists("uploads/" . $img_file)) {
-    $img_src = "uploads/" . $img_file;
-} else {
-    $img_src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"; // ပုံမရှိပါက ပြရန် Default ပုံလင့်ခ်
-}
+                    if (strpos($img_file, 'http') === 0) {
+                        $img_src = $img_file;
+                    } elseif (!empty($img_file) && file_exists("uploads/" . $img_file)) {
+                        $img_src = "uploads/" . $img_file;
+                    } else {
+                        $img_src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c";
+                    }
             ?>
                 <tr>
-                    <form action="menu_dashboard.php" method="POST">
+                    <form action="menu_dashboard.php?page_tab=admin-edit" method="POST">
                         <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
-                        <td><img src="<?php echo $img_src; ?>" class="menu-thumb" width="50" style="object-fit: cover; border-radius: 8px;"></td>
+                        <td><img src="<?php echo htmlspecialchars($img_src); ?>" class="menu-thumb" width="50" style="object-fit: cover; border-radius: 8px;"></td>
                         <td><input type="text" name="item_name" class="form-control form-control-sm" value="<?php echo htmlspecialchars($item['item_name']); ?>" required></td>
                         <td>
                             <select name="category" class="form-select form-select-sm">
@@ -443,13 +441,15 @@ if (strpos($img_file, 'http') === 0) {
                         <td><input type="number" name="price" class="form-control form-control-sm" value="<?php echo $item['price']; ?>" required></td>
                         <td>
                             <button type="submit" name="update_item" class="btn btn-sm btn-success"><i class="fa-solid fa-check"></i></button>
-                            <a href="menu_dashboard.php?delete_item_id=<?php echo $item['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('ဖျက်မှာလား?')"><i class="fa-solid fa-trash"></i></a>
+                            <a href="menu_dashboard.php?delete_item_id=<?php echo $item['id']; ?>&page_tab=admin-edit" class="btn btn-sm btn-danger" onclick="return confirm('ဖျက်မှာလား?')"><i class="fa-solid fa-trash"></i></a>
                         </td>
                     </form>
                 </tr>
             <?php 
                 } 
-            } 
+            } else {
+                echo '<tr><td colspan="5" class="text-muted py-4">မီနူးဒေတာ မရှိသေးပါ။ ဟင်းပွဲအသစ် ထည့်ပါ။</td></tr>';
+            }
             ?>
         </tbody>
     </table>
