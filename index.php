@@ -56,7 +56,7 @@ $result = $conn->query($query);
 <body>
 
 <div class="hero">
-    <h1>U Myanmarfood 🍲</h1>
+    <h1>U food 🍲</h1>
 </div>
 
 <!-- Display Current Table -->
