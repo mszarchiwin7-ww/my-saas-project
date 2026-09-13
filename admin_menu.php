@@ -190,8 +190,8 @@ if (isset($_GET['delete_item_id'])) {
         <div class="dashboard-box">
             <h3 class="fw-bold text-primary mb-4">📊 Sales Report</h3>
             <div class="row mb-4">
-                <div class="col-md-6 mb-3"><div class="report-card"><p class="text-muted mb-1">ယနေ့ အရောင်း စုစုပေါင်း</p><h2 class="fw-bold text-success">0 MMK</h2></div></div>
-                <div class="col-md-6 mb-3"><div class="report-card"><p class="text-muted mb-1">ယခုလ အရောင်း စုစုပေါင်း</p><h2 class="fw-bold text-primary">0 MMK</h2></div></div>
+                <div class="col-md-6 mb-3"><div class="report-card"><p class="text-muted mb-1">ယနေ့ အရောင်း စုစုပေါင်း</p><h2 class="fw-bold text-success">0 Baht</h2></div></div>
+                <div class="col-md-6 mb-3"><div class="report-card"><p class="text-muted mb-1">ယခုလ အရောင်း စုစုပေါင်း</p><h2 class="fw-bold text-primary">0 Baht</h2></div></div>
             </div>
         </div>
     </div>

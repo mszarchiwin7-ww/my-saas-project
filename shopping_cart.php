@@ -78,7 +78,7 @@ if (cart.length === 0) {
     });
     html += `<li class='list-group-item d-flex justify-content-between bg-light'>
                 <span class='fw-bold'>စုစုပေါင်း (Total)</span>
-                <strong class='text-success'>${total} MMK</strong>
+                <strong class='text-success'>${total} Baht</strong>
              </li>`;
     html += "</ul>";
     container.innerHTML = html;

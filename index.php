@@ -79,7 +79,7 @@ $result = $conn->query($query);
         <div class="food-card">
         <img src="<?php echo $display_img; ?>" class="food-img" onerror="this.src='https://via.placeholder.com/100?text=Error'">
         <h5><?php echo htmlspecialchars($row['item_name']); ?></h5>
-        <p class="text-danger fw-bold"><?php echo number_format($row['price']); ?> MMK</p>
+        <p class="text-danger fw-bold"><?php echo number_format($row['price']); ?>Baht</p>
         
         <button class="btn-add" id="btn-<?php echo $row['id']; ?>" onclick="showControls('<?php echo $row['id']; ?>')">
             ➕ ခြင်းတောင်းထဲထည့်မည်
