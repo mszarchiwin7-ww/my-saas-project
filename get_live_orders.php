@@ -64,7 +64,7 @@ if ($result_cashier->num_rows > 0) {
             <td><span class='badge bg-dark'>🪑 Table {$t_num}</span></td>
             <td class='text-start ps-3'>
                 <div class='text-wrap text-secondary mb-1' style='font-size: 13px; max-width: 200px;'>📋 {$all_items}</div>
-                <span class='text-danger fw-bold' style='font-size: 15px;'>💰 {$total_bill} MMK</span>
+                <span class='text-danger fw-bold' style='font-size: 15px;'>💰 {$total_bill} Baht</span>
             </td>
             <td>
                 <a href='view_bill.php?table_number={$t_url}' target='_blank' class='btn btn-sm btn-info fw-bold text-white me-1'>🖨️ ဘေလ်ထုတ်ရန်</a>

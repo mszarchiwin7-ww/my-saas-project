@@ -94,7 +94,7 @@ if (isset($_POST['add_item'])) {
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold text-secondary">💰 ဈေးနှုန်း (MMK)</label>
+                <label class="form-label fw-bold text-secondary">💰 ဈေးနှုန်း (Baht)</label>
                 <input type="number" name="price" class="form-control" placeholder="ဥပမာ - ၃၅၀၀" required style="border-radius: 8px;">
             </div>
 
