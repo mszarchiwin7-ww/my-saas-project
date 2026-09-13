@@ -604,13 +604,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
             for(let i=0; i<items.length; i++) {
                 if(items[i].trim() !== "") {
-                    receiptHtml += `<tr><td>${items[i]}</td><td style="text-align:right;">${Number(prices[i] || 0).toLocaleString()} MMK</td></tr>`;
+                    receiptHtml += `<tr><td>${items[i]}</td><td style="text-align:right;">${Number(prices[i] || 0).toLocaleString()} Baht</td></tr>`;
                 }
             }
 
             receiptHtml += `</tbody></table>
                 <div class="separator"></div>
-                <div class="total-row">စုစုပေါင်း: ${totalBill.toLocaleString()} MMK</div>
+                <div class="total-row">စုစုပေါင်း: ${totalBill.toLocaleString()} Baht</div>
                 <div style="margin-top:25px; font-style:italic;">~ ကျေးဇူးတင်ပါသည် ~</div>
             </body>
             </html>`;
