@@ -259,7 +259,7 @@ if ($server_ip === '127.0.0.1' || $server_ip === '::1') {
                         <tr>
                             <td class="fw-bold">ခုံ - <?php echo $row['table_number']; ?></td>
                             <td class="text-start"><?php echo $row['all_items']; ?></td>
-                            <td class="fw-bold text-danger"><?php echo number_format($row['total_bill']); ?> MMK</td>
+                            <td class="fw-bold text-danger"><?php echo number_format($row['total_bill']); ?> Baht</td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-dark fw-bold me-1 print-bill-btn" 
                                         data-table="<?php echo $row['table_number']; ?>" 
@@ -313,7 +313,7 @@ if ($server_ip === '127.0.0.1' || $server_ip === '::1') {
                             <td><?php echo $row['order_date']; ?></td>
                             <td class="fw-bold">ခုံ - <?php echo $row['table_number']; ?></td>
                             <td class="text-start small"><?php echo htmlspecialchars($row['item_list']); ?></td>
-                            <td class="fw-bold text-success"><?php echo number_format($row['paid_total']); ?> MMK</td>
+                            <td class="fw-bold text-success"><?php echo number_format($row['paid_total']); ?> Baht</td>
                         </tr>
                     <?php } } else { ?>
                         <tr><td colspan="4" class="text-muted py-4">ရှင်းပြီးသား မှတ်တမ်းမရှိသေးပါ။</td></tr>
@@ -344,8 +344,8 @@ if ($result) {
     <div class="dashboard-box">
         <h3 class="fw-bold text-primary mb-4">📊 Sales Report (အင်တာနက်မလိုဘဲ တိုက်ရိုက်ပြသခြင်း)</h3>
         <div class="row mb-4">
-            <div class="col-md-6 mb-3"><div class="report-card"><p class="text-muted mb-1">ယနေ့ အရောင်း စုစုပေါင်း</p><h2 class="fw-bold text-success"><?php echo number_format($monthly_income); ?> MMK</h2></div></div>
-            <div class="col-md-6 mb-3"><div class="report-card" style="border-top-color: #2ecc71;"><p class="text-muted mb-1">ယခုလ အရောင်း စုစုပေါင်း</p><h2 class="fw-bold text-primary"><?php echo number_format($monthly_income); ?> MMK</h2></div></div>
+            <div class="col-md-6 mb-3"><div class="report-card"><p class="text-muted mb-1">ယနေ့ အရောင်း စုစုပေါင်း</p><h2 class="fw-bold text-success"><?php echo number_format($monthly_income); ?> Baht</h2></div></div>
+            <div class="col-md-6 mb-3"><div class="report-card" style="border-top-color: #2ecc71;"><p class="text-muted mb-1">ယခုလ အရောင်း စုစုပေါင်း</p><h2 class="fw-bold text-primary"><?php echo number_format($monthly_income); ?> Baht</h2></div></div>
         </div>
         
         <h5 class="fw-bold text-dark mb-2">📊 လအလိုက် ရောင်းရငွေ ပြည့်စုံသောဇယားကွက်</h5>
@@ -374,7 +374,7 @@ if ($result) {
                 $label_class = $is_current ? 'text-primary fw-bold' : '';
             ?>
                 <div class="bar-item">
-                    <div class="bar-fill" style="height: <?php echo $height_percent; ?>%; background: <?php echo $bar_color; ?>" data-value="<?php echo number_format($sale_amount); ?> MMK"></div>
+                    <div class="bar-fill" style="height: <?php echo $height_percent; ?>%; background: <?php echo $bar_color; ?>" data-value="<?php echo number_format($sale_amount); ?> Baht"></div>
                     <div class="bar-label <?php echo $label_class; ?>"><?php echo $name; ?></div>
                 </div>
             <?php } ?>
