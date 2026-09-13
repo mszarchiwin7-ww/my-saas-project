@@ -111,7 +111,7 @@ function submitOrder() {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('အော်ဒါတင်ရာတွင် အမှားအယွင်း ရှိis နေပါသည်။');
+        alert('အော်ဒါတင်ရာတွင် အမှားအယွင်း ရှိနေပါသည်။');
     });
 }
 </script>
