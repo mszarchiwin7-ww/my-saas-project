@@ -400,13 +400,14 @@ if ($result) {
                         </div>
                         <div class="mb-3">
                             <label class="small fw-bold mb-1">အမျိုးအစား</label>
-<select name="category" class="form-select form-select-sm" style="min-width: 130px;">
-    <option value="အကင်" <?php echo ($item['category'] == 'အကင်') ? 'selected' : ''; ?>>🔥 အကင်</option>
-    <option value="အသုပ်" <?php echo ($item['category'] == 'အသုပ်') ? 'selected' : ''; ?>>🥗 အသုပ်</option>
-    <option value="အရည်" <?php echo ($item['category'] == 'အရည်') ? 'selected' : ''; ?>>🍲 အရည်</option>
-    <option value="အပေါင်း" <?php echo ($item['category'] == 'အပေါင်း') ? 'selected' : ''; ?>>🍛 အပေါင်း</option>
-    <option value="အပြုတ်" <?php echo ($item['category'] == 'အပြုတ်') ? 'selected' : ''; ?>>🥘 အပြုတ်</option>
-</select>
+                            <select name="category" class="form-select" required>
+                                <option value="">အမျိုးအစား ရွေးပါ</option>
+                                <option value="အကင်">🔥 အကင်</option>
+                                <option value="အသုပ်">🥗 အသုပ်</option>
+                                <option value="အရည်">🍲 အရည်</option>
+                                <option value="အပေါင်း">🍛 အပေါင်း</option>
+                                <option value="အပြုတ်">🥘 အပြုတ်</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="small fw-bold mb-1">ပုံလင့်ခ် (Image URL ထည့်ပါ)</label>
