@@ -418,16 +418,16 @@ if ($result) {
             // Database ထဲက menu items တွေကို loop ပတ်ထုတ်ခြင်း (အကယ်၍ $items variable သုံးထားလျှင်)
             if (!empty($items)) {
                 foreach ($items as $item) {
-                    $img_file = !empty($item['item_image']) ? $item['item_image'] : '';
+$img_file = !empty($item['item_image']) ? $item['item_image'] : '';
 
-                    // အကယ်၍ Cloudinary URL ဖြစ်ပါက သို့မဟုတ် Local ဖြစ်ပါက စစ်ဆေးခြင်း
-                    if (strpos($img_file, 'http') === 0) {
-                        $img_src = $img_file;
-                    } elseif (!empty($img_file) && file_exists("uploads/" . $img_file)) {
-                        $img_src = "uploads/" . $img_file;
-                    } else {
-                        $img_src = "uploads/default.jpg";
-                    }
+// URL လင့်ခ် (http သို့မဟုတ် https) စတင်ပါက တိုက်ရိုက်ယူမည်၊ မဟုတ်ပါက uploads folder သို့မဟုတ် default ကိုသုံးမည်
+if (strpos($img_file, 'http') === 0) {
+    $img_src = $img_file;
+} elseif (!empty($img_file) && file_exists("uploads/" . $img_file)) {
+    $img_src = "uploads/" . $img_file;
+} else {
+    $img_src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"; // ပုံမရှိပါက ပြရန် Default ပုံလင့်ခ်
+}
             ?>
                 <tr>
                     <form action="menu_dashboard.php" method="POST">
