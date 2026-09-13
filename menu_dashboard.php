@@ -409,11 +409,16 @@ if ($result) {
                 <div class="col-md-4 mb-4">
                     <div class="card p-3 shadow-sm bg-light border-0">
                         <h5 class="fw-bold text-primary mb-3">➕ ဟင်းပွဲအသစ်ထည့်ရန်</h5>
-                        <form action="menu_dashboard.php" method="POST" enctype="multipart/form-data">
+                        <!-- ပြင်ဆင်ပြီးသား Form (Image URL သုံးရန်) -->
+                        <form action="menu_dashboard.php" method="POST">
                             <div class="mb-3"><label class="small fw-bold mb-1">ဟင်းလျာအမည်</label><input type="text" name="item_name" class="form-control" required></div>
                             <div class="mb-3"><label class="small fw-bold mb-1">ဈေးနှုန်း</label><input type="number" name="price" class="form-control" required></div>
                             <div class="mb-3"><label class="small fw-bold mb-1">အမျိုးအစား</label><select name="category" class="form-select"><option value="အကင်">🔥 အကင်</option><option value="အသုပ်">🥗 အသုပ်</option></select></div>
-                            <div class="mb-3"><label class="small fw-bold mb-1">ပုံတင်ရန်</label><input type="file" name="item_image" class="form-control" accept="image/*" required></div>
+                            <div class="mb-3">
+                                <label class="small fw-bold mb-1">ပုံလင့်ခ် (Image URL ထည့်ပါ)</label>
+                                <input type="text" name="item_image" class="form-control" placeholder="ဥပမာ - https://images.unsplash.com/..." required>
+                                <small class="text-muted" style="font-size: 11px;">(Google Images သို့မဟုတ် Unsplash မှ Copy image link ယူ၍ ထည့်ပါ)</small>
+                            </div>
                             <button type="submit" name="add_item" class="btn btn-primary w-100 fw-bold">ဒေတာသိမ်းမည်</button>
                         </form>
                     </div>
@@ -446,7 +451,7 @@ if ($result) {
                     }
             ?>
                 <tr>
-                    <form action="menu_dashboard.php" method="POST" enctype="multipart/form-data">
+                    <form action="menu_dashboard.php" method="POST">
                         <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
                         <td><img src="<?php echo $img_src; ?>" class="menu-thumb" width="50" style="object-fit: cover; border-radius: 8px;"></td>
                         <td><input type="text" name="item_name" class="form-control form-control-sm" value="<?php echo htmlspecialchars($item['item_name']); ?>" required></td>
@@ -473,9 +478,7 @@ if ($result) {
             </div>
         </div>
     </div>
-
 </div>
-
 <audio id="orderSound" src="file:///C:/Windows/Media/notify.wav" preload="auto"></audio>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
