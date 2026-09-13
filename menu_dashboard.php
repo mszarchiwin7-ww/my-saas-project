@@ -501,12 +501,22 @@ function playTestSound() {
 }
 
 function generateSelfQR() {
-    let ip = document.getElementById('computerIP').value;
     let tableNum = document.getElementById('inputTableNum').value;
     if(!tableNum || tableNum < 1) tableNum = 1;
     
     document.getElementById('displayTableNum').innerText = tableNum;
-let finalLink = "http://" + ip + "/my-saas-project/index.php?table=" + tableNum;    document.getElementById('qrLinkText').innerText = finalLink;
+    
+    // 🌟 Railway နှင့် Local နှစ်ခုစလုံးတွင် အလုပ်လုပ်စေရန် window.location.origin ကို သုံးခြင်း
+    let baseUrl = window.location.origin; // မူရင်း Domain (ဥပမာ - https://your-app.up.railway.app) ကို အလိုအလျောက်ယူမည်
+    
+    // တကယ်လို့ project folder နာမည် (လိုချင်မှ ထည့်ပါ၊ Railway မှာ root ဖြစ်နေရင် /index.php ပဲ သုံးရပါမယ်)
+    // ဥပမာ - Railway တွင် subfolder မရှိဘဲ တိုက်ရိုက်ဆိုလျှင်:
+    let finalLink = baseUrl + "/index.php?table=" + tableNum;
+    
+    // အကယ်၍ path ထဲမှာ folder ပါနေသေးရင် (ဥပမာ /my-saas-project/index.php) အောက်ပါအတိုင်း သုံးပါ:
+    // let finalLink = baseUrl + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + "/index.php?table=" + tableNum;
+
+    document.getElementById('qrLinkText').innerText = finalLink;
     
     let qrContainer = document.getElementById("qrcode-canvas");
     qrContainer.innerHTML = ""; 
@@ -520,7 +530,6 @@ let finalLink = "http://" + ip + "/my-saas-project/index.php?table=" + tableNum;
         correctLevel : QRCode.CorrectLevel.H
     });
 }
-
 function checkIncomingOrders() {
     fetch('menu_dashboard.php?check_new_orders=1')
         .then(response => response.json())
