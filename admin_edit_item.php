@@ -135,7 +135,7 @@ if (isset($_POST['update_item'])) {
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold text-secondary">💰 ဈေးနှုန်း (MMK)</label>
+                <label class="form-label fw-bold text-secondary">💰 ဈေးနှုန်း (Baht)</label>
                 <input type="number" name="price" class="form-control" value="<?php echo $row['price']; ?>" required style="border-radius: 8px;">
             </div>
 
@@ -197,7 +197,7 @@ if (isset($_POST['update_item'])) {
                 <td><img src="<?php echo htmlspecialchars($img_src); ?>" width="50" height="50" style="object-fit: cover; border-radius: 8px;"></td>
                 <td><?php echo htmlspecialchars($item['item_name']); ?></td>
                 <td><?php echo htmlspecialchars($item['category']); ?></td>
-                <td><?php echo number_format($item['price']); ?> MMK</td>
+                <td><?php echo number_format($item['price']); ?> Baht</td>
                 <td>
                     <a href="admin_edit.php?id=<?php echo $item['id']; ?>" class="btn btn-warning btn-sm">ပြင်ဆင်မည်</a>
                 </td>
